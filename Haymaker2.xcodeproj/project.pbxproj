@@ -9,21 +9,75 @@
 /* Begin PBXBuildFile section */
 		A22B97142810F55200F70B0F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A22B97132810F55200F70B0F /* AppDelegate.swift */; };
 		A22B97162810F55200F70B0F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A22B97152810F55200F70B0F /* SceneDelegate.swift */; };
-		A22B97182810F55200F70B0F /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A22B97172810F55200F70B0F /* ViewController.swift */; };
+		A22B97182810F55200F70B0F /* TitleScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A22B97172810F55200F70B0F /* TitleScreenViewController.swift */; };
 		A22B971B2810F55200F70B0F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A22B97192810F55200F70B0F /* Main.storyboard */; };
 		A22B971D2810F55400F70B0F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A22B971C2810F55400F70B0F /* Assets.xcassets */; };
 		A22B97202810F55400F70B0F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A22B971E2810F55400F70B0F /* LaunchScreen.storyboard */; };
+		A22B972B2810F99C00F70B0F /* ParagonUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A22B972A2810F99C00F70B0F /* ParagonUtility.swift */; };
+		A22B97312811065300F70B0F /* AttackUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A22B97302811065300F70B0F /* AttackUtility.swift */; };
+		A22B973328110D2800F70B0F /* PowerUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A22B973228110D2800F70B0F /* PowerUtility.swift */; };
+		A22F86AD28A771E600C31330 /* AttributesUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A22F86AC28A771E600C31330 /* AttributesUtility.swift */; };
+		A22F86AF28A7726700C31330 /* StatusUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A22F86AE28A7726700C31330 /* StatusUtility.swift */; };
+		A22F86B128A776CF00C31330 /* AttackCollectionUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A22F86B028A776CF00C31330 /* AttackCollectionUtility.swift */; };
+		A22F86B328A81A9000C31330 /* GearUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A22F86B228A81A9000C31330 /* GearUtility.swift */; };
+		A22F86B528A89C8600C31330 /* GearCollectionUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A22F86B428A89C8600C31330 /* GearCollectionUtility.swift */; };
+		A22F86B728A89CE600C31330 /* WeaponUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A22F86B628A89CE600C31330 /* WeaponUtility.swift */; };
+		A22F86B928A89E0600C31330 /* WeaponCollectionUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A22F86B828A89E0600C31330 /* WeaponCollectionUtility.swift */; };
+		A236E46928A8A1E500A68BD9 /* WeaponsCollection.csv in Resources */ = {isa = PBXBuildFile; fileRef = A236E46828A8A1E500A68BD9 /* WeaponsCollection.csv */; };
+		A236E46B28A8A2BC00A68BD9 /* CSVReaderUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A236E46A28A8A2BC00A68BD9 /* CSVReaderUtility.swift */; };
+		A236E47128AA12F500A68BD9 /* RarityUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A236E47028AA12F500A68BD9 /* RarityUtility.swift */; };
+		A236E47328AA13E800A68BD9 /* CurrencyUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A236E47228AA13E800A68BD9 /* CurrencyUtility.swift */; };
+		A236E47528AB5B7100A68BD9 /* AttackCollection.csv in Resources */ = {isa = PBXBuildFile; fileRef = A236E47428AB5B7100A68BD9 /* AttackCollection.csv */; };
+		A2796EC128A60B170032CB2C /* DeckUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2796EC028A60B170032CB2C /* DeckUtility.swift */; };
+		A2796EC328A60B250032CB2C /* CardUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2796EC228A60B250032CB2C /* CardUtility.swift */; };
+		A2796EC828A61EA80032CB2C /* AllCards.plist in Resources */ = {isa = PBXBuildFile; fileRef = A2796EC728A61EA80032CB2C /* AllCards.plist */; };
+		A2AE05C528A35B2B0018E205 /* CombatUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AE05C428A35B2B0018E205 /* CombatUtility.swift */; };
+		A2AE05C728A36C140018E205 /* DiceUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AE05C628A36C140018E205 /* DiceUtility.swift */; };
+		A2B226AA28B46DEA00C7CA99 /* RaceUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B226A928B46DEA00C7CA99 /* RaceUtility.swift */; };
+		A2B226AC28B5400300C7CA99 /* CSVReaderPositionsUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B226AB28B5400300C7CA99 /* CSVReaderPositionsUtility.swift */; };
+		A2B226AE28B553CD00C7CA99 /* ItemUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B226AD28B553CD00C7CA99 /* ItemUtility.swift */; };
+		A2B226B028B553F700C7CA99 /* ItemCollectionUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B226AF28B553F700C7CA99 /* ItemCollectionUtility.swift */; };
+		A2B226B228B6B64100C7CA99 /* CardCollection.csv in Resources */ = {isa = PBXBuildFile; fileRef = A2B226B128B6B64100C7CA99 /* CardCollection.csv */; };
+		A2B226B428B717C800C7CA99 /* CardCollectionUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B226B328B717C800C7CA99 /* CardCollectionUtility.swift */; };
+		A2B226B628B729B300C7CA99 /* EquipmentUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B226B528B729B300C7CA99 /* EquipmentUtility.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		A22B97102810F55200F70B0F /* Haymaker2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Haymaker2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A22B97132810F55200F70B0F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A22B97152810F55200F70B0F /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		A22B97172810F55200F70B0F /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		A22B97172810F55200F70B0F /* TitleScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleScreenViewController.swift; sourceTree = "<group>"; };
 		A22B971A2810F55200F70B0F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		A22B971C2810F55400F70B0F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A22B971F2810F55400F70B0F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A22B97212810F55400F70B0F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A22B972A2810F99C00F70B0F /* ParagonUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParagonUtility.swift; sourceTree = "<group>"; };
+		A22B97302811065300F70B0F /* AttackUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttackUtility.swift; sourceTree = "<group>"; };
+		A22B973228110D2800F70B0F /* PowerUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerUtility.swift; sourceTree = "<group>"; };
+		A22F86AC28A771E600C31330 /* AttributesUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributesUtility.swift; sourceTree = "<group>"; };
+		A22F86AE28A7726700C31330 /* StatusUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusUtility.swift; sourceTree = "<group>"; };
+		A22F86B028A776CF00C31330 /* AttackCollectionUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttackCollectionUtility.swift; sourceTree = "<group>"; };
+		A22F86B228A81A9000C31330 /* GearUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GearUtility.swift; sourceTree = "<group>"; };
+		A22F86B428A89C8600C31330 /* GearCollectionUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GearCollectionUtility.swift; sourceTree = "<group>"; };
+		A22F86B628A89CE600C31330 /* WeaponUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeaponUtility.swift; sourceTree = "<group>"; };
+		A22F86B828A89E0600C31330 /* WeaponCollectionUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeaponCollectionUtility.swift; sourceTree = "<group>"; };
+		A236E46828A8A1E500A68BD9 /* WeaponsCollection.csv */ = {isa = PBXFileReference; lastKnownFileType = text; name = WeaponsCollection.csv; path = Haymaker2/CSVs/WeaponsCollection.csv; sourceTree = SOURCE_ROOT; };
+		A236E46A28A8A2BC00A68BD9 /* CSVReaderUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVReaderUtility.swift; sourceTree = "<group>"; };
+		A236E47028AA12F500A68BD9 /* RarityUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RarityUtility.swift; sourceTree = "<group>"; };
+		A236E47228AA13E800A68BD9 /* CurrencyUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyUtility.swift; sourceTree = "<group>"; };
+		A236E47428AB5B7100A68BD9 /* AttackCollection.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = AttackCollection.csv; path = Haymaker2/CSVs/AttackCollection.csv; sourceTree = SOURCE_ROOT; };
+		A2796EC028A60B170032CB2C /* DeckUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckUtility.swift; sourceTree = "<group>"; };
+		A2796EC228A60B250032CB2C /* CardUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardUtility.swift; sourceTree = "<group>"; };
+		A2796EC728A61EA80032CB2C /* AllCards.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = AllCards.plist; sourceTree = "<group>"; };
+		A2AE05C428A35B2B0018E205 /* CombatUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombatUtility.swift; sourceTree = "<group>"; };
+		A2AE05C628A36C140018E205 /* DiceUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiceUtility.swift; sourceTree = "<group>"; };
+		A2B226A928B46DEA00C7CA99 /* RaceUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceUtility.swift; sourceTree = "<group>"; };
+		A2B226AB28B5400300C7CA99 /* CSVReaderPositionsUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVReaderPositionsUtility.swift; sourceTree = "<group>"; };
+		A2B226AD28B553CD00C7CA99 /* ItemUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemUtility.swift; sourceTree = "<group>"; };
+		A2B226AF28B553F700C7CA99 /* ItemCollectionUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemCollectionUtility.swift; sourceTree = "<group>"; };
+		A2B226B128B6B64100C7CA99 /* CardCollection.csv */ = {isa = PBXFileReference; lastKnownFileType = file; name = CardCollection.csv; path = Haymaker2/CSVs/CardCollection.csv; sourceTree = SOURCE_ROOT; };
+		A2B226B328B717C800C7CA99 /* CardCollectionUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardCollectionUtility.swift; sourceTree = "<group>"; };
+		A2B226B528B729B300C7CA99 /* EquipmentUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EquipmentUtility.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -40,6 +94,8 @@
 		A22B97072810F55200F70B0F = {
 			isa = PBXGroup;
 			children = (
+				A236E46728A8A1CD00A68BD9 /* CSVs */,
+				A2796EC928A61F7D0032CB2C /* Plists */,
 				A22B97122810F55200F70B0F /* Haymaker2 */,
 				A22B97112810F55200F70B0F /* Products */,
 			);
@@ -58,13 +114,94 @@
 			children = (
 				A22B97132810F55200F70B0F /* AppDelegate.swift */,
 				A22B97152810F55200F70B0F /* SceneDelegate.swift */,
-				A22B97172810F55200F70B0F /* ViewController.swift */,
-				A22B97192810F55200F70B0F /* Main.storyboard */,
+				A22B97292810F8DC00F70B0F /* Utilities */,
+				A22B97272810F56100F70B0F /* Storyboards */,
+				A22B97282810F57000F70B0F /* ViewControllers */,
 				A22B971C2810F55400F70B0F /* Assets.xcassets */,
-				A22B971E2810F55400F70B0F /* LaunchScreen.storyboard */,
 				A22B97212810F55400F70B0F /* Info.plist */,
 			);
 			path = Haymaker2;
+			sourceTree = "<group>";
+		};
+		A22B97272810F56100F70B0F /* Storyboards */ = {
+			isa = PBXGroup;
+			children = (
+				A22B97192810F55200F70B0F /* Main.storyboard */,
+				A22B971E2810F55400F70B0F /* LaunchScreen.storyboard */,
+			);
+			path = Storyboards;
+			sourceTree = "<group>";
+		};
+		A22B97282810F57000F70B0F /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				A22B97172810F55200F70B0F /* TitleScreenViewController.swift */,
+			);
+			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		A22B97292810F8DC00F70B0F /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				A236E46F28A8A64000A68BD9 /* Gameplay */,
+				A236E46E28A8A62700A68BD9 /* General */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		A236E46728A8A1CD00A68BD9 /* CSVs */ = {
+			isa = PBXGroup;
+			children = (
+				A236E47428AB5B7100A68BD9 /* AttackCollection.csv */,
+				A2B226B128B6B64100C7CA99 /* CardCollection.csv */,
+				A236E46828A8A1E500A68BD9 /* WeaponsCollection.csv */,
+			);
+			path = CSVs;
+			sourceTree = "<group>";
+		};
+		A236E46E28A8A62700A68BD9 /* General */ = {
+			isa = PBXGroup;
+			children = (
+				A236E46A28A8A2BC00A68BD9 /* CSVReaderUtility.swift */,
+				A2B226AB28B5400300C7CA99 /* CSVReaderPositionsUtility.swift */,
+			);
+			path = General;
+			sourceTree = "<group>";
+		};
+		A236E46F28A8A64000A68BD9 /* Gameplay */ = {
+			isa = PBXGroup;
+			children = (
+				A2AE05C428A35B2B0018E205 /* CombatUtility.swift */,
+				A22B972A2810F99C00F70B0F /* ParagonUtility.swift */,
+				A2B226A928B46DEA00C7CA99 /* RaceUtility.swift */,
+				A22F86AC28A771E600C31330 /* AttributesUtility.swift */,
+				A22F86AE28A7726700C31330 /* StatusUtility.swift */,
+				A22B973228110D2800F70B0F /* PowerUtility.swift */,
+				A2796EC228A60B250032CB2C /* CardUtility.swift */,
+				A2B226B328B717C800C7CA99 /* CardCollectionUtility.swift */,
+				A2796EC028A60B170032CB2C /* DeckUtility.swift */,
+				A22B97302811065300F70B0F /* AttackUtility.swift */,
+				A22F86B028A776CF00C31330 /* AttackCollectionUtility.swift */,
+				A22F86B628A89CE600C31330 /* WeaponUtility.swift */,
+				A22F86B828A89E0600C31330 /* WeaponCollectionUtility.swift */,
+				A22F86B228A81A9000C31330 /* GearUtility.swift */,
+				A22F86B428A89C8600C31330 /* GearCollectionUtility.swift */,
+				A2B226AD28B553CD00C7CA99 /* ItemUtility.swift */,
+				A2B226AF28B553F700C7CA99 /* ItemCollectionUtility.swift */,
+				A2B226B528B729B300C7CA99 /* EquipmentUtility.swift */,
+				A236E47228AA13E800A68BD9 /* CurrencyUtility.swift */,
+				A2AE05C628A36C140018E205 /* DiceUtility.swift */,
+				A236E47028AA12F500A68BD9 /* RarityUtility.swift */,
+			);
+			path = Gameplay;
+			sourceTree = "<group>";
+		};
+		A2796EC928A61F7D0032CB2C /* Plists */ = {
+			isa = PBXGroup;
+			children = (
+				A2796EC728A61EA80032CB2C /* AllCards.plist */,
+			);
+			path = Plists;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -125,9 +262,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A236E47528AB5B7100A68BD9 /* AttackCollection.csv in Resources */,
 				A22B97202810F55400F70B0F /* LaunchScreen.storyboard in Resources */,
+				A2B226B228B6B64100C7CA99 /* CardCollection.csv in Resources */,
 				A22B971D2810F55400F70B0F /* Assets.xcassets in Resources */,
+				A2796EC828A61EA80032CB2C /* AllCards.plist in Resources */,
 				A22B971B2810F55200F70B0F /* Main.storyboard in Resources */,
+				A236E46928A8A1E500A68BD9 /* WeaponsCollection.csv in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -138,8 +279,31 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A22B97182810F55200F70B0F /* ViewController.swift in Sources */,
+				A22B972B2810F99C00F70B0F /* ParagonUtility.swift in Sources */,
+				A2B226B628B729B300C7CA99 /* EquipmentUtility.swift in Sources */,
+				A22B97182810F55200F70B0F /* TitleScreenViewController.swift in Sources */,
+				A2796EC328A60B250032CB2C /* CardUtility.swift in Sources */,
+				A22F86B528A89C8600C31330 /* GearCollectionUtility.swift in Sources */,
+				A2B226B428B717C800C7CA99 /* CardCollectionUtility.swift in Sources */,
+				A236E47128AA12F500A68BD9 /* RarityUtility.swift in Sources */,
+				A236E47328AA13E800A68BD9 /* CurrencyUtility.swift in Sources */,
+				A2AE05C528A35B2B0018E205 /* CombatUtility.swift in Sources */,
+				A22B973328110D2800F70B0F /* PowerUtility.swift in Sources */,
+				A2796EC128A60B170032CB2C /* DeckUtility.swift in Sources */,
+				A22F86B928A89E0600C31330 /* WeaponCollectionUtility.swift in Sources */,
+				A22F86B128A776CF00C31330 /* AttackCollectionUtility.swift in Sources */,
+				A22F86B328A81A9000C31330 /* GearUtility.swift in Sources */,
+				A236E46B28A8A2BC00A68BD9 /* CSVReaderUtility.swift in Sources */,
+				A2B226B028B553F700C7CA99 /* ItemCollectionUtility.swift in Sources */,
+				A2B226AE28B553CD00C7CA99 /* ItemUtility.swift in Sources */,
+				A22F86AF28A7726700C31330 /* StatusUtility.swift in Sources */,
 				A22B97142810F55200F70B0F /* AppDelegate.swift in Sources */,
+				A2AE05C728A36C140018E205 /* DiceUtility.swift in Sources */,
+				A2B226AA28B46DEA00C7CA99 /* RaceUtility.swift in Sources */,
+				A22F86B728A89CE600C31330 /* WeaponUtility.swift in Sources */,
+				A22F86AD28A771E600C31330 /* AttributesUtility.swift in Sources */,
+				A2B226AC28B5400300C7CA99 /* CSVReaderPositionsUtility.swift in Sources */,
+				A22B97312811065300F70B0F /* AttackUtility.swift in Sources */,
 				A22B97162810F55200F70B0F /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
