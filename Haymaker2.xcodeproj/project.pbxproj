@@ -30,7 +30,6 @@
 		A236E47528AB5B7100A68BD9 /* AttackCollection.csv in Resources */ = {isa = PBXBuildFile; fileRef = A236E47428AB5B7100A68BD9 /* AttackCollection.csv */; };
 		A2796EC128A60B170032CB2C /* DeckUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2796EC028A60B170032CB2C /* DeckUtility.swift */; };
 		A2796EC328A60B250032CB2C /* CardUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2796EC228A60B250032CB2C /* CardUtility.swift */; };
-		A2796EC828A61EA80032CB2C /* AllCards.plist in Resources */ = {isa = PBXBuildFile; fileRef = A2796EC728A61EA80032CB2C /* AllCards.plist */; };
 		A2AE05C528A35B2B0018E205 /* CombatUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AE05C428A35B2B0018E205 /* CombatUtility.swift */; };
 		A2AE05C728A36C140018E205 /* DiceUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2AE05C628A36C140018E205 /* DiceUtility.swift */; };
 		A2B226AA28B46DEA00C7CA99 /* RaceUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B226A928B46DEA00C7CA99 /* RaceUtility.swift */; };
@@ -68,14 +67,13 @@
 		A236E47428AB5B7100A68BD9 /* AttackCollection.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = AttackCollection.csv; path = Haymaker2/CSVs/AttackCollection.csv; sourceTree = SOURCE_ROOT; };
 		A2796EC028A60B170032CB2C /* DeckUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckUtility.swift; sourceTree = "<group>"; };
 		A2796EC228A60B250032CB2C /* CardUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardUtility.swift; sourceTree = "<group>"; };
-		A2796EC728A61EA80032CB2C /* AllCards.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = AllCards.plist; sourceTree = "<group>"; };
 		A2AE05C428A35B2B0018E205 /* CombatUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombatUtility.swift; sourceTree = "<group>"; };
 		A2AE05C628A36C140018E205 /* DiceUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiceUtility.swift; sourceTree = "<group>"; };
 		A2B226A928B46DEA00C7CA99 /* RaceUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaceUtility.swift; sourceTree = "<group>"; };
 		A2B226AB28B5400300C7CA99 /* CSVReaderPositionsUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVReaderPositionsUtility.swift; sourceTree = "<group>"; };
 		A2B226AD28B553CD00C7CA99 /* ItemUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemUtility.swift; sourceTree = "<group>"; };
 		A2B226AF28B553F700C7CA99 /* ItemCollectionUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemCollectionUtility.swift; sourceTree = "<group>"; };
-		A2B226B128B6B64100C7CA99 /* CardCollection.csv */ = {isa = PBXFileReference; lastKnownFileType = file; name = CardCollection.csv; path = Haymaker2/CSVs/CardCollection.csv; sourceTree = SOURCE_ROOT; };
+		A2B226B128B6B64100C7CA99 /* CardCollection.csv */ = {isa = PBXFileReference; lastKnownFileType = text; name = CardCollection.csv; path = Haymaker2/CSVs/CardCollection.csv; sourceTree = SOURCE_ROOT; };
 		A2B226B328B717C800C7CA99 /* CardCollectionUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardCollectionUtility.swift; sourceTree = "<group>"; };
 		A2B226B528B729B300C7CA99 /* EquipmentUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EquipmentUtility.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -95,7 +93,6 @@
 			isa = PBXGroup;
 			children = (
 				A236E46728A8A1CD00A68BD9 /* CSVs */,
-				A2796EC928A61F7D0032CB2C /* Plists */,
 				A22B97122810F55200F70B0F /* Haymaker2 */,
 				A22B97112810F55200F70B0F /* Products */,
 			);
@@ -196,14 +193,6 @@
 			path = Gameplay;
 			sourceTree = "<group>";
 		};
-		A2796EC928A61F7D0032CB2C /* Plists */ = {
-			isa = PBXGroup;
-			children = (
-				A2796EC728A61EA80032CB2C /* AllCards.plist */,
-			);
-			path = Plists;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -266,7 +255,6 @@
 				A22B97202810F55400F70B0F /* LaunchScreen.storyboard in Resources */,
 				A2B226B228B6B64100C7CA99 /* CardCollection.csv in Resources */,
 				A22B971D2810F55400F70B0F /* Assets.xcassets in Resources */,
-				A2796EC828A61EA80032CB2C /* AllCards.plist in Resources */,
 				A22B971B2810F55200F70B0F /* Main.storyboard in Resources */,
 				A236E46928A8A1E500A68BD9 /* WeaponsCollection.csv in Resources */,
 			);
