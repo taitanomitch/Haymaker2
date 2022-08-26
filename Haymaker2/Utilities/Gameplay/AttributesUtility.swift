@@ -122,35 +122,4 @@ class AttributesManager {
             RangeImmune = false
         }
     }
-    
-    func combineWithAttributeManager(AttributesToAdd: AttributesManager) -> AttributesManager {
-        let newAttributeManager: AttributesManager = AttributesManager()
-        newAttributeManager.Health = self.Health + AttributesToAdd.Health
-        newAttributeManager.Energy = self.Energy + AttributesToAdd.Energy
-        newAttributeManager.Speed = self.Speed + AttributesToAdd.Speed
-        newAttributeManager.Initiative = self.Initiative + AttributesToAdd.Initiative
-        newAttributeManager.HealthRecovery = self.HealthRecovery + AttributesToAdd.HealthRecovery
-        newAttributeManager.EnergyRecovery = self.EnergyRecovery + AttributesToAdd.EnergyRecovery
-        newAttributeManager.Fighting = self.Fighting + AttributesToAdd.Fighting
-        newAttributeManager.Sharpshooting = self.Sharpshooting + AttributesToAdd.Sharpshooting
-        newAttributeManager.CombatMagic = self.CombatMagic + AttributesToAdd.CombatMagic
-        newAttributeManager.Attack = self.Attack + AttributesToAdd.Attack
-        newAttributeManager.Damage = self.Damage + AttributesToAdd.Damage
-        newAttributeManager.MeleeDefense = self.MeleeDefense + AttributesToAdd.MeleeDefense
-        newAttributeManager.RangeDefense = self.RangeDefense + AttributesToAdd.RangeDefense
-        newAttributeManager.Toughness = self.Toughness + AttributesToAdd.Toughness
-        newAttributeManager.Willpower = self.Willpower + AttributesToAdd.Willpower
-        var combinedImmuneTypes: [AttackType] = self.ImmuneTypes
-        combinedImmuneTypes.append(contentsOf: AttributesToAdd.ImmuneTypes)
-        var combinedStrengthTypes: [AttackType] = self.StrengthTypes
-        combinedStrengthTypes.append(contentsOf: AttributesToAdd.StrengthTypes)
-        var combinedWeaknessTypes: [AttackType] = self.StrengthTypes
-        combinedWeaknessTypes.append(contentsOf: AttributesToAdd.WeaknessTypes)
-        newAttributeManager.ImmuneTypes = combinedImmuneTypes
-        newAttributeManager.StrengthTypes = combinedStrengthTypes
-        newAttributeManager.WeaknessTypes = combinedWeaknessTypes
-        newAttributeManager.MeleeImmune = self.MeleeImmune || AttributesToAdd.MeleeImmune
-        newAttributeManager.RangeImmune = self.RangeImmune || AttributesToAdd.RangeImmune
-        return newAttributeManager
-    }
 }

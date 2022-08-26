@@ -15,13 +15,9 @@ class CardCollectionUtility {
     
     init() {
         let CardCSVReader = CSVReader()
-        let result = CardCSVReader.readCardCollectionCSV()
-        if result {
-            self.CardCollectionArray = CardCSVReader.CardCollectionArray
-            createCardDictionaries()
-        } else {
-            print("Error reading Attack CSV")
-        }
+        CardCSVReader.readCardCollectionCSV()
+        self.CardCollectionArray = CardCSVReader.CardCollectionArray
+        createCardDictionaries()
     }
     
     func getCardFromDictionary(CardID: String) -> ParagonCard {

@@ -23,93 +23,48 @@ class CSVReader {
         }
     }
     
-    func readAttackCollectionCSV() -> Bool {
+    func readAttackCollectionCSV() {
         let ReaderPositionUtility = CSVReaderPositionsUtility()
         let numberOfColumns = ReaderPositionUtility.AttackCSVColumnCount
-        let fileURL = Bundle.main.url(forResource: "AttackCollection", withExtension: "csv")
-        do {
-            let savedData = try String(contentsOf: fileURL!)
-            let entireCSV = savedData.components(separatedBy: CharacterSet(charactersIn: ";\n"))
-            var allAttacksArray: [[String]] = [[]]
-            var nextAttackArray: [String] = []
-            var firstEntry = true
-            for i in 0..<entireCSV.count {
-                nextAttackArray.append(entireCSV[i])
-                if nextAttackArray.count == numberOfColumns {
-                    if firstEntry {
-                        allAttacksArray[0] = nextAttackArray
-                        firstEntry = false
-                    } else {
-                        allAttacksArray.append(nextAttackArray)
-                    }
-                    nextAttackArray = []
-                }
-            }
-            AttackCollectionArray = allAttacksArray
-            return true
-        } catch {
-            AttackCollectionArray = [["AttackCollection File wasn't found"]]
-            return false
-        }
+        AttackCollectionArray = readCollectionCSV(CSVName: "AttackCollection", NumberOfColumns: numberOfColumns)
     }
     
-    func readCardCollectionCSV() -> Bool {
+    func readCardCollectionCSV() {
         let ReaderPositionUtility = CSVReaderPositionsUtility()
         let numberOfColumns = ReaderPositionUtility.CardCSVColumnCount
-        let fileURL = Bundle.main.url(forResource: "CardCollection", withExtension: "csv")
-        do {
-            let savedData = try String(contentsOf: fileURL!)
-            let entireCSV = savedData.components(separatedBy: CharacterSet(charactersIn: ";\n"))
-            var allCardsArray: [[String]] = [[]]
-            var nextCardArray: [String] = []
-            var firstEntry = true
-            for i in 0..<entireCSV.count {
-                nextCardArray.append(entireCSV[i])
-                if nextCardArray.count == numberOfColumns {
-                    if firstEntry {
-                        allCardsArray[0] = nextCardArray
-                        firstEntry = false
-                    } else {
-                        allCardsArray.append(nextCardArray)
-                    }
-                    nextCardArray = []
-                }
-            }
-            CardCollectionArray = allCardsArray
-            return true
-        } catch {
-            CardCollectionArray = [["CardCollection File wasn't found"]]
-            return false
-        }
+        CardCollectionArray = readCollectionCSV(CSVName: "CardCollection", NumberOfColumns: numberOfColumns)
     }
     
-    func readWeaponCollectionCSV() -> Bool {
+    func readWeaponCollectionCSV() {
         let ReaderPositionUtility = CSVReaderPositionsUtility()
         let numberOfColumns = ReaderPositionUtility.WeaponCSVColumnCount
-        let fileURL = Bundle.main.url(forResource: "WeaponsCollection", withExtension: "csv")
+        WeaponCollectionArray = readCollectionCSV(CSVName: "WeaponsCollection", NumberOfColumns: numberOfColumns)
+    }
+    
+    func readCollectionCSV(CSVName: String, NumberOfColumns: Int) -> [[String]] {
+        let numberOfColumns = NumberOfColumns
+        let fileURL = Bundle.main.url(forResource: CSVName, withExtension: "csv")
         do {
             let savedData = try String(contentsOf: fileURL!)
             let entireCSV = savedData.components(separatedBy: CharacterSet(charactersIn: ";\n"))
-            var allWeaponsArray: [[String]] = [[]]
-            var nextWeaponArray: [String] = []
+            var allArray: [[String]] = [[]]
+            var nextArray: [String] = []
             var firstEntry = true
             for i in 0..<entireCSV.count {
-                nextWeaponArray.append(entireCSV[i])
-                if nextWeaponArray.count == numberOfColumns {
+                nextArray.append(entireCSV[i])
+                if nextArray.count == numberOfColumns {
                     if firstEntry {
-                        allWeaponsArray[0] = nextWeaponArray
+                        allArray[0] = nextArray
                         firstEntry = false
                     } else {
-                        allWeaponsArray.append(nextWeaponArray)
+                        allArray.append(nextArray)
                     }
-                    nextWeaponArray = []
+                    nextArray = []
                 }
             }
-            WeaponCollectionArray = allWeaponsArray
-            return true
+            return allArray
         } catch {
-            WeaponCollectionArray = [["WeaponsCollection File wasn't found"]]
-            return false
+            return [["\(CSVName) File wasn't found"]]
         }
     }
     

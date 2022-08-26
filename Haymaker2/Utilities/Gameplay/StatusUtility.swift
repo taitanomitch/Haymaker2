@@ -29,13 +29,30 @@ enum ParagonStatus: String {
     case Healed //?
     case Restored //?
     case Revived //?
-    case FireShield //Deal 1 Fire Type Damage to any character attacking or being attacked by you
     case DivinlyBlessed //Super Buff to stats
     case Blessed //Buff to stats
     case Guided //Buff to Attack
     case ImmuneToMeleeAttacks
     case ImmuneToRangeAttacks
     case ImmuneToMentalAttacks
+    case FireMagicShield //Deal 1 Fire Damage to any character successfully attacking or being attacked by you
+    case WaterMagicShield
+    case LightningMagicShield
+    case IceMagicShield
+    case EarthMagicShield
+    case NatureMagicShield
+    case EnergyMagicShield
+    case CosmicMagicShield
+    case HolyMagicShield
+    case NecroticMagicShield
+    case PoisonMagicShield
+    case ChaosMagicShield
+    case ArcaneMagicShield
+    case LightMagicShield
+    case DarkMagicShield
+    case ForceMagicShield
+    case TemporalMagicShield
+    case SonicMagicShield
     case None
 }
 

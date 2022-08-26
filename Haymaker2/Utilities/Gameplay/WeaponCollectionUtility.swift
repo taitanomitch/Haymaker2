@@ -14,13 +14,9 @@ class WeaponCollection {
     
     init() {
         let CardCSVReader = CSVReader()
-        let result = CardCSVReader.readWeaponCollectionCSV()
-        if result {
-            self.WeaponCollectionArray = CardCSVReader.WeaponCollectionArray
-            createWeaponDictionary()
-        } else {
-            print("Error reading Attack CSV")
-        }
+        CardCSVReader.readWeaponCollectionCSV()
+        self.WeaponCollectionArray = CardCSVReader.WeaponCollectionArray
+        createWeaponDictionary()
     }
     
     func createWeaponDictionary() {

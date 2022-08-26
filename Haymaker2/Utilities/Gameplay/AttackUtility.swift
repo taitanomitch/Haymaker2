@@ -11,15 +11,16 @@ enum AttackType: String, CaseIterable, CustomStringConvertible {
     case Smashing
     case Piercing
     case Slashing
+    case Pure
     case Knockback
     case Fire
     case Water
     case Lightning
     case Ice
     case Earth
+    case Nature
     case Energy
     case Cosmic
-    case Pure
     case Holy
     case Necrotic
     case Poison
@@ -29,6 +30,8 @@ enum AttackType: String, CaseIterable, CustomStringConvertible {
     case Light
     case Dark
     case Force
+    case Temporal
+    case Sonic
     case Choose
     case Random
     case None
@@ -38,15 +41,16 @@ enum AttackType: String, CaseIterable, CustomStringConvertible {
         case .Smashing: return "Smashing"
         case .Piercing: return "Piercing"
         case .Slashing: return "Slashing"
+        case .Pure: return "Pure"
         case .Knockback: return "Knockback"
         case .Fire: return "Fire"
         case .Water: return "Water"
         case .Lightning: return "Lightning"
         case .Ice: return "Ice"
         case .Earth: return "Earth"
+        case .Nature: return "Nature"
         case .Energy: return "Energy"
         case .Cosmic: return "Cosmic"
-        case .Pure: return "Pure"
         case .Holy: return "Holy"
         case .Necrotic: return "Necrotic"
         case .Poison: return "Poison"
@@ -56,6 +60,8 @@ enum AttackType: String, CaseIterable, CustomStringConvertible {
         case .Light: return "Light"
         case .Dark: return "Dark"
         case .Force: return "Force"
+        case .Temporal: return "Temporal"
+        case .Sonic: return "Sonic"
         case .Choose: return "Choose"
         case .Random: return "Random"
         case .None: return "None"
@@ -69,9 +75,9 @@ enum AttackType: String, CaseIterable, CustomStringConvertible {
         MagicAttackTypes.append(.Lightning)
         MagicAttackTypes.append(.Ice)
         MagicAttackTypes.append(.Earth)
+        MagicAttackTypes.append(.Nature)
         MagicAttackTypes.append(.Energy)
         MagicAttackTypes.append(.Cosmic)
-        MagicAttackTypes.append(.Pure)
         MagicAttackTypes.append(.Holy)
         MagicAttackTypes.append(.Necrotic)
         MagicAttackTypes.append(.Poison)
@@ -80,6 +86,8 @@ enum AttackType: String, CaseIterable, CustomStringConvertible {
         MagicAttackTypes.append(.Light)
         MagicAttackTypes.append(.Dark)
         MagicAttackTypes.append(.Force)
+        MagicAttackTypes.append(.Temporal)
+        MagicAttackTypes.append(.Sonic)
         return MagicAttackTypes
     }
     
@@ -138,10 +146,10 @@ enum AOEType: String {
     case None
 }
 
-enum AttackBenefits: String {
-    case Initiative
-    case Damage
-    case Defense
+enum AttackActivationPhase: String {
+    case Normal
+    case StartOfCombat
+    case Passive //Start of turn
     case None
 }
 
@@ -190,7 +198,9 @@ class AttackSet {
 class ParagonAttack {
     
     var AttackID: String = ""
+    var AttackImageString: String = ""
     var AttackParagonClass: String = ""
+    var AttackParagonClassAttackTier: String = ""
     var AttackName: String = ""
     var AttackClass: AttackClass = .Fighting
     var AttackDifficulty: Int = 0
@@ -206,12 +216,13 @@ class ParagonAttack {
     var UnlimitedAttackPoints: Bool = false
     var AttackTypes: [AttackType] = []
     var AttackDistance: AttackDistance = .Melee
+    var AttackIsSelfBuffDebuff: Bool = false
     var AttackRangeMinumum: Double = 0
     var AttackRangeMaximum: Double = 0
     var AttackMovementDistance: Int = 0
     var AttackMovementSpeedHinderance: AttackMovementSpeedHinderance = .HalfSpeed
     var AttackMovementOccasion: AttackMovementOccasion = .BeforeOrAfterAttack
-    var AttackBenefits: [AttackBenefits] = []
+    var AttackActivationPhase: AttackActivationPhase = .None
     var AttackSelfStatusInfliction: [ParagonStatus] = []
     var AttackSelfStatusInflictionTurns: [Int] = []
     var AttackStatusInfliction: [ParagonStatus] = []
@@ -222,39 +233,16 @@ class ParagonAttack {
     var isUltimate: Bool = false
     var isPrimaryAttack: Bool = false
     
-    var BuffAttack: Int = 0
-    var BuffDamage: Int = 0
-    var BuffMeleeDefense: Int = 0
-    var BuffRangeDefense: Int = 0
-    var BuffToughness: Int = 0
-    var BuffWillpower: Int = 0
     
-    var BuffAttackToSelf: Bool = true
-    var BuffDamageToSelf: Bool = true
-    var BuffMeleeDefenseToSelf: Bool = true
-    var BuffRangeDefenseToSelf: Bool = true
-    var BuffToughnessToSelf: Bool = true
-    var BuffWillpowerToSelf: Bool = true
-    
+    var AttackBuff: Buff = Buff()
+    var BuffToSelf: Bool = true
     var BuffIsForAlly: Bool = false
     var BuffIsAOE: Bool = false
     var BuffAOEType: AOEType = .None
     var BuffAOERange: Int = 0
     
-    var DebuffAttack: Int = 0
-    var DebuffDamage: Int = 0
-    var DebuffMeleeDefense: Int = 0
-    var DebuffRangeDefense: Int = 0
-    var DebuffToughness: Int = 0
-    var DebuffWillpower: Int = 0
-    
-    var DebuffAttackToSelf: Bool = true
-    var DebuffDamageToSelf: Bool = true
-    var DebuffMeleeDefenseToSelf: Bool = true
-    var DebuffRangeDefenseToSelf: Bool = true
-    var DebuffToughnessToSelf: Bool = true
-    var DebuffWillpowerToSelf: Bool = true
-    
+    var AttackDebuff: Buff = Buff()
+    var DebuffToSelf: Bool = false
     var DebuffIsForAlly: Bool = false
     var DebuffIsAOE: Bool = false
     var DebuffAOEType: AOEType = .None
@@ -264,50 +252,21 @@ class ParagonAttack {
         
     }
     
-    init(AttackID: String, AttackParagonClass: String, AttackName: String, AttackClass: AttackClass, AttackDifficulty: Int, AttackValue: Int, AttackBaseDamage: Int, AttackDamageDie: String, BuffAttack: Int, BuffDamage: Int, BuffMeleeDefense: Int, BuffRangeDefense: Int, BuffToughness: Int, BuffWillpower: Int, BuffAttackToSelf: Bool, BuffDamageToSelf: Bool, BuffMeleeDefenseToSelf: Bool, BuffRangeDefenseToSelf: Bool, BuffToughnessToSelf: Bool, BuffWillpowerToSelf: Bool, BuffIsForAlly: Bool, BuffIsAOE: Bool, BuffAOEType: AOEType, BuffAOERange: Int, DebuffAttack: Int, DebuffDamage: Int, DebuffMeleeDefense: Int, DebuffRangeDefense: Int, DebuffToughness: Int, DebuffWillpower: Int, DebuffAttackToSelf: Bool, DebuffDamageToSelf: Bool, DebuffMeleeDefenseToSelf: Bool, DebuffRangeDefenseToSelf: Bool, DebuffToughnessToSelf: Bool, DebuffWillpowerToSelf: Bool, DebuffIsForAlly: Bool, DebuffIsAOE: Bool, DebuffAOEType: AOEType, DebuffAOERange: Int, AttackUsesPrimaryWeaponAttack: Bool, AttackEnergyCost: Int, AttackPoints: Int, UnlimitedAttackPoints: Bool, AttackTypes: [AttackType], AttackDistance: AttackDistance, AttackRangeMinimum: Double, AttackRangeMaximum: Double, AttackMovementSpeedHinderance: AttackMovementSpeedHinderance, AttackMovementOccasion: AttackMovementOccasion, AttackBenefits: [AttackBenefits], AttackSelfStatusInfliction: [ParagonStatus], AttackSelfStatusInflictionTurns: [Int], AttackStatusInfliction: [ParagonStatus], AttackStatusInflictionTurns: [Int], NumberOfAttacks: Int, isAOE: Bool, AOEType: AOEType, isUltimate: Bool, isPrimaryAttack: Bool) {
+    init(AttackID: String, AttackParagonClass: String, AttackParagonClassAttackTier: String, AttackName: String, AttackClass: AttackClass, AttackDifficulty: Int, AttackValue: Int, AttackBaseDamage: Int, AttackDamageDie: String, BuffToSelf: Bool, BuffIsForAlly: Bool, BuffIsAOE: Bool, BuffAOEType: AOEType, BuffAOERange: Int, DebuffToSelf: Bool,  DebuffIsForAlly: Bool, DebuffIsAOE: Bool, DebuffAOEType: AOEType, DebuffAOERange: Int, AttackUsesPrimaryWeaponAttack: Bool, AttackEnergyCost: Int, AttackPoints: Int, UnlimitedAttackPoints: Bool, AttackTypes: [AttackType], AttackDistance: AttackDistance, AttackRangeMinimum: Double, AttackRangeMaximum: Double, AttackMovementSpeedHinderance: AttackMovementSpeedHinderance, AttackMovementOccasion: AttackMovementOccasion, AttackActivationPhase: AttackActivationPhase, AttackSelfStatusInfliction: [ParagonStatus], AttackSelfStatusInflictionTurns: [Int], AttackStatusInfliction: [ParagonStatus], AttackStatusInflictionTurns: [Int], NumberOfAttacks: Int, isAOE: Bool, AOEType: AOEType, isUltimate: Bool, isPrimaryAttack: Bool, Buff: Buff, Debuff: Buff) {
         self.AttackID = AttackID
+        self.AttackImageString = AttackID
         self.AttackParagonClass = AttackParagonClass
+        self.AttackParagonClassAttackTier = AttackParagonClassAttackTier
         self.AttackName = AttackName
         self.AttackClass = AttackClass
         self.AttackDifficulty = AttackDifficulty
         self.AttackValue = AttackValue
         self.AttackBaseDamage = AttackBaseDamage
         self.AttackDamageDie = AttackDamageDie
-        self.BuffAttack = BuffAttack
-        self.BuffDamage = BuffDamage
-        self.BuffMeleeDefense = BuffMeleeDefense
-        self.BuffRangeDefense = BuffRangeDefense
-        self.BuffToughness = BuffToughness
-        self.BuffWillpower = BuffWillpower
-        self.BuffAttackToSelf = BuffAttackToSelf
-        self.BuffDamageToSelf = BuffDamageToSelf
-        self.BuffMeleeDefenseToSelf = BuffMeleeDefenseToSelf
-        self.BuffRangeDefenseToSelf = BuffRangeDefenseToSelf
-        self.BuffToughnessToSelf = BuffToughnessToSelf
-        self.BuffWillpowerToSelf = BuffWillpowerToSelf
-        self.BuffIsForAlly = BuffIsForAlly
-        self.BuffIsAOE = BuffIsAOE
-        self.BuffAOEType = BuffAOEType
-        self.BuffAOERange = BuffAOERange
-        self.DebuffAttack = DebuffAttack
-        self.DebuffDamage = DebuffDamage
-        self.DebuffMeleeDefense = DebuffMeleeDefense
-        self.DebuffRangeDefense = DebuffRangeDefense
-        self.DebuffToughness = DebuffToughness
-        self.DebuffWillpower = DebuffWillpower
-        self.DebuffAttackToSelf = DebuffAttackToSelf
-        self.DebuffDamageToSelf = DebuffDamageToSelf
-        self.DebuffMeleeDefenseToSelf = DebuffMeleeDefenseToSelf
-        self.DebuffRangeDefenseToSelf = DebuffRangeDefenseToSelf
-        self.DebuffToughnessToSelf = DebuffToughnessToSelf
-        self.DebuffWillpowerToSelf = DebuffWillpowerToSelf
-        self.DebuffIsForAlly = DebuffIsForAlly
-        self.DebuffIsAOE = DebuffIsAOE
-        self.DebuffAOEType = DebuffAOEType
-        self.DebuffAOERange = BuffAOERange
         self.AttackUsesPrimaryWeaponAttack = AttackUsesPrimaryWeaponAttack
         self.AttackEnergyCost = AttackEnergyCost
         self.AttackPointsMAX = AttackPoints
+        self.AttackPointsRemaining = AttackPoints
         self.UnlimitedAttackPoints = UnlimitedAttackPoints
         self.AttackTypes = AttackTypes
         self.AttackDistance = AttackDistance
@@ -315,7 +274,7 @@ class ParagonAttack {
         self.AttackRangeMaximum = AttackRangeMaximum
         self.AttackMovementSpeedHinderance = AttackMovementSpeedHinderance
         self.AttackMovementOccasion = AttackMovementOccasion
-        self.AttackBenefits = AttackBenefits
+        self.AttackActivationPhase = AttackActivationPhase
         self.AttackSelfStatusInfliction = AttackSelfStatusInfliction
         self.AttackSelfStatusInflictionTurns = AttackSelfStatusInflictionTurns
         self.AttackStatusInfliction = AttackStatusInfliction
@@ -325,6 +284,20 @@ class ParagonAttack {
         self.AOEType = AOEType
         self.isUltimate = isUltimate
         self.isPrimaryAttack = isPrimaryAttack
+        
+        self.AttackBuff = Buff
+        self.BuffToSelf = BuffToSelf
+        self.BuffIsForAlly = BuffIsForAlly
+        self.BuffIsAOE = BuffIsAOE
+        self.BuffAOEType = BuffAOEType
+        self.BuffAOERange = BuffAOERange
+        
+        self.AttackDebuff = Debuff
+        self.DebuffToSelf = DebuffToSelf
+        self.DebuffIsForAlly = DebuffIsForAlly
+        self.DebuffIsAOE = DebuffIsAOE
+        self.DebuffAOEType = DebuffAOEType
+        self.DebuffAOERange = BuffAOERange
     }
     
     func prepareAttackForCombat() {

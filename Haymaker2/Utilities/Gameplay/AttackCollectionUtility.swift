@@ -16,13 +16,9 @@ class AttackCollection {
     //MARK: - Initializer
     init() {
         let AttackCSVReader = CSVReader()
-        let result = AttackCSVReader.readAttackCollectionCSV()
-        if result {
-            self.AttackCollectionArray = AttackCSVReader.AttackCollectionArray
-            createAttackDictionaries()
-        } else {
-            print("Error reading Attack CSV")
-        }
+        AttackCSVReader.readAttackCollectionCSV()
+        self.AttackCollectionArray = AttackCSVReader.AttackCollectionArray
+        createAttackDictionaries()
     }
     
     
@@ -55,75 +51,226 @@ class AttackCollection {
     
     func parseAttackCollectionCSV(forAttackID: String) -> ParagonAttack {
         let CSVPositions: CSVReaderPositionsUtility = CSVReaderPositionsUtility()
-        var attackPosition = -1
+        var AttackPosition = -1
         let AttackIDRawValue = "\"\(forAttackID)\""
         for i in 0..<AttackCollectionArray.count {
             if AttackCollectionArray[i][0] == AttackIDRawValue {
-                attackPosition = i
+                AttackPosition = i
                 break
             }
         }
         
-        for i in 0..<AttackCollectionArray[attackPosition].count {
-            AttackCollectionArray[attackPosition][i] = AttackCollectionArray[attackPosition][i].replacingOccurrences(of: "\"", with: "", options: .literal, range: nil)
+        for i in 0..<AttackCollectionArray[AttackPosition].count {
+            AttackCollectionArray[AttackPosition][i] = AttackCollectionArray[AttackPosition][i].replacingOccurrences(of: "\"", with: "", options: .literal, range: nil)
         }
         
-        if attackPosition == -1 {
+        if AttackPosition == -1 {
             return ParagonAttack()
         }
         
-        let CreatedAttackClass: AttackClass = AttackClass(rawValue: AttackCollectionArray[attackPosition][CSVPositions.AttackClassPos])!
+        let CreatedAttackClass: AttackClass = AttackClass(rawValue: AttackCollectionArray[AttackPosition][CSVPositions.AttackClassPos])!
         
-        let AttackTypesStringArray: [String] = (AttackCollectionArray[attackPosition][CSVPositions.AttackTypesPos]).components(separatedBy: "|")
+        let AttackTypesStringArray: [String] = (AttackCollectionArray[AttackPosition][CSVPositions.AttackTypesPos]).components(separatedBy: "|")
         var CreatedAttackTypes: [AttackType] = []
+        var ShouldSkipNextItem: Bool = false
         for i in 0..<AttackTypesStringArray.count {
-            CreatedAttackTypes.append(AttackType(rawValue: AttackTypesStringArray[i])!)
+            if !ShouldSkipNextItem {
+                if AttackTypesStringArray[i] == "Random" {
+                    ShouldSkipNextItem = true
+                    let randomTypesCount: Int = Int(AttackTypesStringArray[i+1])!
+                    let attackType: AttackType = AttackType.None
+                    var allMagicTypes = attackType.getMagicTypes()
+                    allMagicTypes.shuffle()
+                    for j in 0..<randomTypesCount {
+                        CreatedAttackTypes.append(allMagicTypes[j])
+                    }
+                } else {
+                    CreatedAttackTypes.append(AttackType(rawValue: AttackTypesStringArray[i])!)
+                }
+            } else {
+                ShouldSkipNextItem = false
+            }
+            
         }
         
-        let CreatedAttackDistance: AttackDistance = AttackDistance(rawValue: AttackCollectionArray[attackPosition][CSVPositions.AttackDistancePos])!
+        let CreatedAttackID: String = String(AttackCollectionArray[AttackPosition][CSVPositions.AttackIDPos])
+        let CreatedAttackParagonClass: String = String(AttackCollectionArray[AttackPosition][CSVPositions.AttackParagonClassPos])
+        let CreatedAttackParagonClassAttackTier: String = String(AttackCollectionArray[AttackPosition][CSVPositions.AttackParagonClassAttackTierPos])
+        let CreatedAttackName: String = String(AttackCollectionArray[AttackPosition][CSVPositions.AttackNamePos])
+        let CreatedAttackDifficulty: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDifficultyPos])!
+        let CreatedAttackValue: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackValuePos])!
+        let CreatedAttackBaseDamage: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackBaseDamagePos])!
+        let CreatedAttackDamageDie: String = String(AttackCollectionArray[AttackPosition][CSVPositions.AttackDamageDiePos])
+        let CreatedBuffToSelf: Bool = Bool(AttackCollectionArray[AttackPosition][CSVPositions.AttackBuffToSelfPos])!
+        let CreatedBuffIsForAlly: Bool = Bool(AttackCollectionArray[AttackPosition][CSVPositions.AttackBuffIsForAllyPos])!
+        let CreatedBuffIsAOE: Bool = Bool(AttackCollectionArray[AttackPosition][CSVPositions.AttackBuffIsAOEPos])!
+        let CreatedBuffAOERange: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackBuffAOERangePos])!
+        let CreatedDebuffToSelf: Bool = Bool(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffToSelfPos])!
+        let CreatedDebuffIsForAlly: Bool = Bool(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffIsForAllyPos])!
+        let CreatedDebuffIsAOE: Bool = Bool(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffIsAOEPos])!
+        let CreatedDebuffAOERange: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffAOERangePos])!
+        let CreatedAttackUsesPrimaryWeaponAttack: Bool = Bool(AttackCollectionArray[AttackPosition][CSVPositions.AttackUsesPrimaryWeaponPos])!
+        let CreatedAttackEnergyCost: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackEnergyCostPos])!
+        let CreatedAttackPoints: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackPointsMAXPos])!
+        let CreatedUnlimitedAttackPoints: Bool = Bool(AttackCollectionArray[AttackPosition][CSVPositions.AttackUnlimitedAttackPointsPos])!
+        let CreatedAttackRangeMinimum: Double = Double(AttackCollectionArray[AttackPosition][CSVPositions.AttackRangeMinimumPos])!
+        let CreatedAttackRangeMaximum: Double = Double(AttackCollectionArray[AttackPosition][CSVPositions.AttackRangeMaximumPos])!
+        let CreatedNumberOfAttacks: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackNumberOfAttacksPos])!
+        let CreatedisAOE: Bool = Bool(AttackCollectionArray[AttackPosition][CSVPositions.AttackisAOEPos])!
+        let CreatedisUltimate: Bool = Bool(AttackCollectionArray[AttackPosition][CSVPositions.AttackisUltimatePos])!
+        let CreatedisPrimaryAttack: Bool = Bool(AttackCollectionArray[AttackPosition][CSVPositions.AttackisPrimaryPos])!
         
-        let CreatedAttackMovementSpeedHinderance: AttackMovementSpeedHinderance = AttackMovementSpeedHinderance(rawValue: AttackCollectionArray[attackPosition][CSVPositions.AttackMovementSpeedHinderancePos])!
-        
-        let CreatedAttackMovementOccasion: AttackMovementOccasion = AttackMovementOccasion(rawValue: AttackCollectionArray[attackPosition][CSVPositions.AttackMovementOccasionPos])!
-        
-        let AttackBenefitsStringArray: [String] = (AttackCollectionArray[attackPosition][CSVPositions.AttackBenefitsPos]).components(separatedBy: "|")
-        var CreatedAttackBenefits: [AttackBenefits] = []
-        for i in 0..<AttackBenefitsStringArray.count {
-            CreatedAttackBenefits.append(AttackBenefits(rawValue: AttackBenefitsStringArray[i])!)
-        }
-        
-        let AttackSelfStatusInflictionStringArray: [String] = (AttackCollectionArray[attackPosition][CSVPositions.AttackSelfStatusInflictionPos]).components(separatedBy: "|")
+        let CreatedAttackDistance: AttackDistance = AttackDistance(rawValue: AttackCollectionArray[AttackPosition][CSVPositions.AttackDistancePos])!
+        let CreatedAttackMovementSpeedHinderance: AttackMovementSpeedHinderance = AttackMovementSpeedHinderance(rawValue: AttackCollectionArray[AttackPosition][CSVPositions.AttackMovementSpeedHinderancePos])!
+        let CreatedAttackMovementOccasion: AttackMovementOccasion = AttackMovementOccasion(rawValue: AttackCollectionArray[AttackPosition][CSVPositions.AttackMovementOccasionPos])!
+        let CreatedAttackActivationPhase: AttackActivationPhase = AttackActivationPhase(rawValue: AttackCollectionArray[AttackPosition][CSVPositions.AttackActivationPhasePos])!
+        let CreatedAOEType: AOEType = AOEType(rawValue: AttackCollectionArray[AttackPosition][CSVPositions.AttackAOETypePos])!
+        let BuffAOEType: AOEType = AOEType(rawValue: AttackCollectionArray[AttackPosition][CSVPositions.AttackBuffAOETypePos])!
+        let DebuffAOEType: AOEType = AOEType(rawValue: AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffAOETypePos])!
+    
+        let AttackSelfStatusInflictionStringArray: [String] = (AttackCollectionArray[AttackPosition][CSVPositions.AttackSelfStatusInflictionPos]).components(separatedBy: "|")
         var CreatedAttackSelfStatusInfliction: [ParagonStatus] = []
         for i in 0..<AttackSelfStatusInflictionStringArray.count {
             CreatedAttackSelfStatusInfliction.append(ParagonStatus(rawValue: AttackSelfStatusInflictionStringArray[i])!)
         }
         
-        let AttackSelfStatusInflictionTurnsStringArray: [String] = (AttackCollectionArray[attackPosition][CSVPositions.AttackSelfStatusInflictionTurnsPos]).components(separatedBy: "|")
+        let AttackSelfStatusInflictionTurnsStringArray: [String] = (AttackCollectionArray[AttackPosition][CSVPositions.AttackSelfStatusInflictionTurnsPos]).components(separatedBy: "|")
         var CreatedAttackSelfStatusInflictionTurns: [Int] = []
         for i in 0..<AttackSelfStatusInflictionTurnsStringArray.count {
             CreatedAttackSelfStatusInflictionTurns.append(Int(AttackSelfStatusInflictionTurnsStringArray[i])!)
         }
         
-        let AttackStatusInflictionStringArray: [String] = (AttackCollectionArray[attackPosition][CSVPositions.AttackStatusInflictionPos]).components(separatedBy: "|")
+        let AttackStatusInflictionStringArray: [String] = (AttackCollectionArray[AttackPosition][CSVPositions.AttackStatusInflictionPos]).components(separatedBy: "|")
         var CreatedAttackStatusInfliction: [ParagonStatus] = []
         for i in 0..<AttackStatusInflictionStringArray.count {
             CreatedAttackStatusInfliction.append(ParagonStatus(rawValue: AttackStatusInflictionStringArray[i])!)
         }
         
-        let AttackStatusInflictionTurnsStringArray: [String] = (AttackCollectionArray[attackPosition][CSVPositions.AttackStatusInflictionTurnsPos]).components(separatedBy: "|")
+        let AttackStatusInflictionTurnsStringArray: [String] = (AttackCollectionArray[AttackPosition][CSVPositions.AttackStatusInflictionTurnsPos]).components(separatedBy: "|")
         var CreatedAttackStatusInflictionTurns: [Int] = []
         for i in 0..<AttackStatusInflictionStringArray.count {
             CreatedAttackStatusInflictionTurns.append(Int(AttackStatusInflictionTurnsStringArray[i])!)
         }
         
-        let CreatedAOEType: AOEType = AOEType(rawValue: AttackCollectionArray[attackPosition][CSVPositions.AttackAOETypePos])!
+        let BuffName = (CreatedAttackName + " Buff")
+        let BuffHealth: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackBuffHealthPos])!
+        let BuffEnergy: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackBuffEnergyPos])!
+        let BuffSpeed: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackBuffSpeedPos])!
+        let BuffHealthRecovery: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackBuffHealthRecoveryPos])!
+        let BuffEnergyRecovery: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackBuffEnergyRecoveryPos])!
+        let BuffAttack: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackBuffAttackPos])!
+        let BuffDamage: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackBuffDamagePos])!
+        let BuffFighting: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackBuffFightingPos])!
+        let BuffSharpshooting: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackBuffSharpshootingPos])!
+        let BuffCombatMagic: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackBuffCombatMagicPos])!
+        let BuffMeleeDefense: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackBuffMeleeDefensePos])!
+        let BuffRangeDefense: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackBuffRangeDefensePos])!
+        let BuffToughness: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackBuffToughnessPos])!
+        let BuffWillpower: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackBuffWillpowerPos])!
         
-        let BuffAOEType: AOEType = AOEType(rawValue: AttackCollectionArray[attackPosition][CSVPositions.AttackBuffAOETypePos])!
-        let DebuffAOEType: AOEType = AOEType(rawValue: AttackCollectionArray[attackPosition][CSVPositions.AttackDebuffAOETypePos])!
+        let BuffImmuneTypesStringArray: [String] = (AttackCollectionArray[AttackPosition][CSVPositions.AttackBuffImmuneTypesPos]).components(separatedBy: "|")
+        var BuffImmuneTypes: [AttackType] = []
+        for i in 0..<BuffImmuneTypesStringArray.count {
+            BuffImmuneTypes.append(AttackType(rawValue: BuffImmuneTypesStringArray[i])!)
+        }
+        let BuffImmuneTypesTurnsStringArray: [String] = (AttackCollectionArray[AttackPosition][CSVPositions.AttackBuffImmuneTypesTurnsPos]).components(separatedBy: "|")
+        var BuffImmuneTypesTurns: [Int] = []
+        for i in 0..<BuffImmuneTypesTurnsStringArray.count {
+            BuffImmuneTypesTurns.append(Int(BuffImmuneTypesTurnsStringArray[i])!)
+        }
+
+        let BuffStrengthTypesStringArray: [String] = (AttackCollectionArray[AttackPosition][CSVPositions.AttackBuffStrengthTypesPos]).components(separatedBy: "|")
+        var BuffStrengthTypes: [AttackType] = []
+        for i in 0..<BuffStrengthTypesStringArray.count {
+            BuffStrengthTypes.append(AttackType(rawValue: BuffStrengthTypesStringArray[i])!)
+        }
+        let BuffStrengthTypesTurnsStringArray: [String] = (AttackCollectionArray[AttackPosition][CSVPositions.AttackBuffStrengthTypesTurnsPos]).components(separatedBy: "|")
+        var BuffStrengthTypesTurns: [Int] = []
+        for i in 0..<BuffStrengthTypesTurnsStringArray.count {
+            BuffStrengthTypesTurns.append(Int(BuffStrengthTypesTurnsStringArray[i])!)
+        }
         
-        let CreatedAttack = ParagonAttack(AttackID: String(AttackCollectionArray[attackPosition][CSVPositions.AttackIDPos]), AttackParagonClass: String(AttackCollectionArray[attackPosition][CSVPositions.AttackParagonClassPos]), AttackName: String(AttackCollectionArray[attackPosition][CSVPositions.AttackNamePos]), AttackClass: CreatedAttackClass, AttackDifficulty: Int(AttackCollectionArray[attackPosition][CSVPositions.AttackDifficultyPos])!, AttackValue: Int(AttackCollectionArray[attackPosition][CSVPositions.AttackValuePos])!, AttackBaseDamage: Int(AttackCollectionArray[attackPosition][CSVPositions.AttackBaseDamagePos])!, AttackDamageDie: AttackCollectionArray[attackPosition][CSVPositions.AttackDamageDiePos], BuffAttack: Int(AttackCollectionArray[attackPosition][CSVPositions.AttackBuffAttackPos])!, BuffDamage: Int(AttackCollectionArray[attackPosition][CSVPositions.AttackBuffDamagePos])!, BuffMeleeDefense: Int(AttackCollectionArray[attackPosition][CSVPositions.AttackBuffMeleeDefensePos])!, BuffRangeDefense: Int(AttackCollectionArray[attackPosition][CSVPositions.AttackBuffRangeDefensePos])!, BuffToughness: Int(AttackCollectionArray[attackPosition][CSVPositions.AttackBuffToughnessPos])!, BuffWillpower: Int(AttackCollectionArray[attackPosition][CSVPositions.AttackBuffWillpowerPos])!, BuffAttackToSelf: Bool(AttackCollectionArray[attackPosition][CSVPositions.AttackAttackBuffToSelfPos])!, BuffDamageToSelf: Bool(AttackCollectionArray[attackPosition][CSVPositions.AttackDamageBuffToSelfPos])!, BuffMeleeDefenseToSelf: Bool(AttackCollectionArray[attackPosition][CSVPositions.AttackMeleeDefenseBuffToSelfPos])!, BuffRangeDefenseToSelf: Bool(AttackCollectionArray[attackPosition][CSVPositions.AttackRangeDefenseBuffToSelfPos])!, BuffToughnessToSelf: Bool(AttackCollectionArray[attackPosition][CSVPositions.AttackToughnessBuffToSelfPos])!, BuffWillpowerToSelf: Bool(AttackCollectionArray[attackPosition][CSVPositions.AttackWilpowerBuffToSelfPos])!, BuffIsForAlly: Bool(AttackCollectionArray[attackPosition][CSVPositions.AttackBuffIsForAllyPos])!, BuffIsAOE: Bool(AttackCollectionArray[attackPosition][CSVPositions.AttackBuffIsAOEPos])!, BuffAOEType: BuffAOEType, BuffAOERange: Int(AttackCollectionArray[attackPosition][CSVPositions.AttackBuffAOERangePos])!, DebuffAttack: Int(AttackCollectionArray[attackPosition][CSVPositions.AttackDebuffAttackPos])!, DebuffDamage: Int(AttackCollectionArray[attackPosition][CSVPositions.AttackDebuffDamagePos])!, DebuffMeleeDefense: Int(AttackCollectionArray[attackPosition][CSVPositions.AttackDebuffMeleeDefensePos])!, DebuffRangeDefense: Int(AttackCollectionArray[attackPosition][CSVPositions.AttackDebuffRangeDefensePos])!, DebuffToughness: Int(AttackCollectionArray[attackPosition][CSVPositions.AttackDebuffToughnessPos])!, DebuffWillpower: Int(AttackCollectionArray[attackPosition][CSVPositions.AttackDebuffWillpowerPos])!, DebuffAttackToSelf: Bool(AttackCollectionArray[attackPosition][CSVPositions.AttackAttackDebuffToSelfPos])!, DebuffDamageToSelf: Bool(AttackCollectionArray[attackPosition][CSVPositions.AttackDamageDebuffToSelfPos])!, DebuffMeleeDefenseToSelf: Bool(AttackCollectionArray[attackPosition][CSVPositions.AttackMeleeDefenseDebuffToSelfPos])!, DebuffRangeDefenseToSelf: Bool(AttackCollectionArray[attackPosition][CSVPositions.AttackRangeDefenseDebuffToSelfPos])!, DebuffToughnessToSelf: Bool(AttackCollectionArray[attackPosition][CSVPositions.AttackToughnessDebuffToSelfPos])!, DebuffWillpowerToSelf: Bool(AttackCollectionArray[attackPosition][CSVPositions.AttackWilpowerDebuffToSelfPos])!, DebuffIsForAlly: Bool(AttackCollectionArray[attackPosition][CSVPositions.AttackDebuffIsForAllyPos])!, DebuffIsAOE: Bool(AttackCollectionArray[attackPosition][CSVPositions.AttackDebuffIsAOEPos])!, DebuffAOEType: DebuffAOEType, DebuffAOERange: Int(AttackCollectionArray[attackPosition][CSVPositions.AttackDebuffAOERangePos])!, AttackUsesPrimaryWeaponAttack: Bool(AttackCollectionArray[attackPosition][CSVPositions.AttackUsesPrimaryWeaponPos])!, AttackEnergyCost: Int(AttackCollectionArray[attackPosition][CSVPositions.AttackEnergyCostPos])!, AttackPoints: Int(AttackCollectionArray[attackPosition][CSVPositions.AttackPointsMAXPos])!, UnlimitedAttackPoints: Bool(AttackCollectionArray[attackPosition][CSVPositions.AttackUnlimitedAttackPointsPos])!, AttackTypes: CreatedAttackTypes, AttackDistance: CreatedAttackDistance, AttackRangeMinimum: Double(AttackCollectionArray[attackPosition][CSVPositions.AttackRangeMinimumPos])!, AttackRangeMaximum: Double(AttackCollectionArray[attackPosition][CSVPositions.AttackRangeMaximumPos])!, AttackMovementSpeedHinderance: CreatedAttackMovementSpeedHinderance, AttackMovementOccasion: CreatedAttackMovementOccasion, AttackBenefits: CreatedAttackBenefits, AttackSelfStatusInfliction: CreatedAttackSelfStatusInfliction, AttackSelfStatusInflictionTurns: CreatedAttackSelfStatusInflictionTurns, AttackStatusInfliction: CreatedAttackStatusInfliction, AttackStatusInflictionTurns: CreatedAttackStatusInflictionTurns, NumberOfAttacks: Int(AttackCollectionArray[attackPosition][CSVPositions.AttackNumberOfAttacksPos])!, isAOE: Bool(AttackCollectionArray[attackPosition][CSVPositions.AttackisAOEPos])!, AOEType: CreatedAOEType, isUltimate: Bool(AttackCollectionArray[attackPosition][CSVPositions.AttackisUltimatePos])!, isPrimaryAttack: Bool(AttackCollectionArray[attackPosition][CSVPositions.AttackisPrimaryPos])!)
+        let BuffWeaknessTypesStringArray: [String] = (AttackCollectionArray[AttackPosition][CSVPositions.AttackBuffWeaknessTypesPos]).components(separatedBy: "|")
+        var BuffWeaknessTypes: [AttackType] = []
+        for i in 0..<BuffWeaknessTypesStringArray.count {
+            BuffWeaknessTypes.append(AttackType(rawValue: BuffWeaknessTypesStringArray[i])!)
+        }
+        let BuffWeaknessTypesTurnsStringArray: [String] = (AttackCollectionArray[AttackPosition][CSVPositions.AttackBuffWeaknessTypesTurnsPos]).components(separatedBy: "|")
+        var BuffWeaknessTypesTurns: [Int] = []
+        for i in 0..<BuffWeaknessTypesTurnsStringArray.count {
+            BuffWeaknessTypesTurns.append(Int(BuffWeaknessTypesTurnsStringArray[i])!)
+        }
         
-        let WeaponKey: String = String(AttackCollectionArray[attackPosition][CSVPositions.AttackWeaponPos])
+        let BuffMeleeImmune: Bool = Bool(AttackCollectionArray[AttackPosition][CSVPositions.AttackBuffMeleeImmunePos])!
+        let BuffMeleeImmuneTurns: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackBuffMeleeImmuneTurnsPos])!
+        let BuffRangeImmune: Bool = Bool(AttackCollectionArray[AttackPosition][CSVPositions.AttackBuffRangeImmunePos])!
+        let BuffRangeImmuneTurns: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackBuffRangeImmuneTurnsPos])!
+
+        let CreatedBuffAttributes: AttributesManager = AttributesManager(ID: (CreatedAttackName+"Buff"), Image: CreatedAttackID, Name: BuffName, Health: BuffHealth, Energy: BuffEnergy, Speed: BuffSpeed, Initiative: 0, HealthRecovery: BuffHealthRecovery, EnergyRecovery: BuffEnergyRecovery, Attack: BuffAttack, Damage: BuffDamage, Fighting: BuffFighting, Sharpshooting: BuffSharpshooting, CombatMagic: BuffCombatMagic, MeleeDefense: BuffMeleeDefense, RangeDefense: BuffRangeDefense, Toughness: BuffToughness, Willpower: BuffWillpower, ImmuneTypes: BuffImmuneTypes, ImmuneTypesTurns: BuffImmuneTypesTurns, StrengthTypes: BuffStrengthTypes, StrengthTypesTurns: BuffStrengthTypesTurns, WeaknessTypes: BuffWeaknessTypes, WeaknessTypesTurns: BuffWeaknessTypesTurns, MeleeImmune: BuffMeleeImmune, MeleeImmuneTurns: BuffMeleeImmuneTurns, RangeImmune: BuffRangeImmune, RangeImmuneTurns: BuffRangeImmuneTurns)
+        let BuffTurns: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackBuffTurnsPos])!
+        let CreatedBuff: Buff = Buff(BuffName: BuffName, BuffTurns: BuffTurns, BuffAttributes: CreatedBuffAttributes)
+        
+        let DebuffName = (CreatedAttackName + " Debuff")
+        let DebuffHealth: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffHealthPos])! * -1
+        let DebuffEnergy: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffEnergyPos])! * -1
+        let DebuffSpeed: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffSpeedPos])! * -1
+        let DebuffHealthRecovery: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffHealthRecoveryPos])! * -1
+        let DebuffEnergyRecovery: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffEnergyRecoveryPos])! * -1
+        let DebuffAttack: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffAttackPos])! * -1
+        let DebuffDamage: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffDamagePos])! * -1
+        let DebuffFighting: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffFightingPos])! * -1
+        let DebuffSharpshooting: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffSharpshootingPos])! * -1
+        let DebuffCombatMagic: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffCombatMagicPos])! * -1
+        let DebuffMeleeDefense: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffMeleeDefensePos])! * -1
+        let DebuffRangeDefense: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffRangeDefensePos])! * -1
+        let DebuffToughness: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffToughnessPos])! * -1
+        let DebuffWillpower: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffWillpowerPos])! * -1
+        
+        let DebuffImmuneTypesStringArray: [String] = (AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffImmuneTypesPos]).components(separatedBy: "|")
+        var DebuffImmuneTypes: [AttackType] = []
+        for i in 0..<DebuffImmuneTypesStringArray.count {
+            DebuffImmuneTypes.append(AttackType(rawValue: DebuffImmuneTypesStringArray[i])!)
+        }
+        let DebuffImmuneTypesTurnsStringArray: [String] = (AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffImmuneTypesTurnsPos]).components(separatedBy: "|")
+        var DebuffImmuneTypesTurns: [Int] = []
+        for i in 0..<DebuffImmuneTypesTurnsStringArray.count {
+            DebuffImmuneTypesTurns.append(Int(DebuffImmuneTypesTurnsStringArray[i])!)
+        }
+
+        let DebuffStrengthTypesStringArray: [String] = (AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffStrengthTypesPos]).components(separatedBy: "|")
+        var DebuffStrengthTypes: [AttackType] = []
+        for i in 0..<DebuffStrengthTypesStringArray.count {
+            DebuffStrengthTypes.append(AttackType(rawValue: DebuffStrengthTypesStringArray[i])!)
+        }
+        let DebuffStrengthTypesTurnsStringArray: [String] = (AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffStrengthTypesTurnsPos]).components(separatedBy: "|")
+        var DebuffStrengthTypesTurns: [Int] = []
+        for i in 0..<DebuffStrengthTypesTurnsStringArray.count {
+            DebuffStrengthTypesTurns.append(Int(DebuffStrengthTypesTurnsStringArray[i])!)
+        }
+        
+        let DebuffWeaknessTypesStringArray: [String] = (AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffWeaknessTypesPos]).components(separatedBy: "|")
+        var DebuffWeaknessTypes: [AttackType] = []
+        for i in 0..<DebuffWeaknessTypesStringArray.count {
+            DebuffWeaknessTypes.append(AttackType(rawValue: DebuffWeaknessTypesStringArray[i])!)
+        }
+        let DebuffWeaknessTypesTurnsStringArray: [String] = (AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffWeaknessTypesTurnsPos]).components(separatedBy: "|")
+        var DebuffWeaknessTypesTurns: [Int] = []
+        for i in 0..<DebuffWeaknessTypesTurnsStringArray.count {
+            DebuffWeaknessTypesTurns.append(Int(DebuffWeaknessTypesTurnsStringArray[i])!)
+        }
+        
+        let DebuffMeleeImmune: Bool = Bool(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffMeleeImmunePos])!
+        let DebuffMeleeImmuneTurns: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffMeleeImmuneTurnsPos])!
+        let DebuffRangeImmune: Bool = Bool(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffRangeImmunePos])!
+        let DebuffRangeImmuneTurns: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffRangeImmuneTurnsPos])!
+
+        let CreatedDebuffAttributes: AttributesManager = AttributesManager(ID: (CreatedAttackName+"Debuff"), Image: CreatedAttackID, Name: DebuffName, Health: DebuffHealth, Energy: DebuffEnergy, Speed: DebuffSpeed, Initiative: 0, HealthRecovery: DebuffHealthRecovery, EnergyRecovery: DebuffEnergyRecovery, Attack: DebuffAttack, Damage: DebuffDamage, Fighting: DebuffFighting, Sharpshooting: DebuffSharpshooting, CombatMagic: DebuffCombatMagic, MeleeDefense: DebuffMeleeDefense, RangeDefense: DebuffRangeDefense, Toughness: DebuffToughness, Willpower: DebuffWillpower, ImmuneTypes: DebuffImmuneTypes, ImmuneTypesTurns: DebuffImmuneTypesTurns, StrengthTypes: DebuffStrengthTypes, StrengthTypesTurns: DebuffStrengthTypesTurns, WeaknessTypes: DebuffWeaknessTypes, WeaknessTypesTurns: DebuffWeaknessTypesTurns, MeleeImmune: DebuffMeleeImmune, MeleeImmuneTurns: DebuffMeleeImmuneTurns, RangeImmune: DebuffRangeImmune, RangeImmuneTurns: DebuffRangeImmuneTurns)
+        let DebuffTurns: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffTurnsPos])!
+        let CreatedDebuff: Buff = Buff(BuffName: DebuffName, BuffTurns: DebuffTurns, BuffAttributes: CreatedDebuffAttributes)
+        
+        let CreatedAttack = ParagonAttack(AttackID: CreatedAttackID, AttackParagonClass: CreatedAttackParagonClass, AttackParagonClassAttackTier: CreatedAttackParagonClassAttackTier, AttackName: CreatedAttackName, AttackClass: CreatedAttackClass, AttackDifficulty: CreatedAttackDifficulty, AttackValue: CreatedAttackValue, AttackBaseDamage: CreatedAttackBaseDamage, AttackDamageDie: CreatedAttackDamageDie, BuffToSelf: CreatedBuffToSelf, BuffIsForAlly: CreatedBuffIsForAlly, BuffIsAOE: CreatedBuffIsAOE, BuffAOEType: BuffAOEType, BuffAOERange: CreatedBuffAOERange, DebuffToSelf: CreatedDebuffToSelf, DebuffIsForAlly: CreatedDebuffIsForAlly, DebuffIsAOE: CreatedDebuffIsAOE, DebuffAOEType: DebuffAOEType, DebuffAOERange: CreatedDebuffAOERange, AttackUsesPrimaryWeaponAttack: CreatedAttackUsesPrimaryWeaponAttack, AttackEnergyCost: CreatedAttackEnergyCost, AttackPoints: CreatedAttackPoints, UnlimitedAttackPoints: CreatedUnlimitedAttackPoints, AttackTypes: CreatedAttackTypes, AttackDistance: CreatedAttackDistance, AttackRangeMinimum: CreatedAttackRangeMinimum, AttackRangeMaximum: CreatedAttackRangeMaximum, AttackMovementSpeedHinderance: CreatedAttackMovementSpeedHinderance, AttackMovementOccasion: CreatedAttackMovementOccasion, AttackActivationPhase: CreatedAttackActivationPhase, AttackSelfStatusInfliction: CreatedAttackSelfStatusInfliction, AttackSelfStatusInflictionTurns: CreatedAttackSelfStatusInflictionTurns, AttackStatusInfliction: CreatedAttackStatusInfliction, AttackStatusInflictionTurns: CreatedAttackStatusInflictionTurns, NumberOfAttacks: CreatedNumberOfAttacks, isAOE: CreatedisAOE, AOEType: CreatedAOEType, isUltimate: CreatedisUltimate, isPrimaryAttack: CreatedisPrimaryAttack, Buff: CreatedBuff, Debuff: CreatedDebuff)
+        
+        let WeaponKey: String = String(AttackCollectionArray[AttackPosition][CSVPositions.AttackWeaponPos])
         if var AttackArray = AttacksForWeaponTypeDictionary[WeaponKey] {
             AttackArray.append(CreatedAttack)
             AttacksForWeaponTypeDictionary[WeaponKey] = AttackArray

@@ -15,7 +15,6 @@
 		A22B97202810F55400F70B0F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A22B971E2810F55400F70B0F /* LaunchScreen.storyboard */; };
 		A22B972B2810F99C00F70B0F /* ParagonUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A22B972A2810F99C00F70B0F /* ParagonUtility.swift */; };
 		A22B97312811065300F70B0F /* AttackUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A22B97302811065300F70B0F /* AttackUtility.swift */; };
-		A22B973328110D2800F70B0F /* PowerUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A22B973228110D2800F70B0F /* PowerUtility.swift */; };
 		A22F86AD28A771E600C31330 /* AttributesUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A22F86AC28A771E600C31330 /* AttributesUtility.swift */; };
 		A22F86AF28A7726700C31330 /* StatusUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A22F86AE28A7726700C31330 /* StatusUtility.swift */; };
 		A22F86B128A776CF00C31330 /* AttackCollectionUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A22F86B028A776CF00C31330 /* AttackCollectionUtility.swift */; };
@@ -39,6 +38,7 @@
 		A2B226B228B6B64100C7CA99 /* CardCollection.csv in Resources */ = {isa = PBXBuildFile; fileRef = A2B226B128B6B64100C7CA99 /* CardCollection.csv */; };
 		A2B226B428B717C800C7CA99 /* CardCollectionUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B226B328B717C800C7CA99 /* CardCollectionUtility.swift */; };
 		A2B226B628B729B300C7CA99 /* EquipmentUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B226B528B729B300C7CA99 /* EquipmentUtility.swift */; };
+		A2B226B828B8757400C7CA99 /* BuffUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2B226B728B8757400C7CA99 /* BuffUtility.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -52,7 +52,6 @@
 		A22B97212810F55400F70B0F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A22B972A2810F99C00F70B0F /* ParagonUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParagonUtility.swift; sourceTree = "<group>"; };
 		A22B97302811065300F70B0F /* AttackUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttackUtility.swift; sourceTree = "<group>"; };
-		A22B973228110D2800F70B0F /* PowerUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PowerUtility.swift; sourceTree = "<group>"; };
 		A22F86AC28A771E600C31330 /* AttributesUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributesUtility.swift; sourceTree = "<group>"; };
 		A22F86AE28A7726700C31330 /* StatusUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusUtility.swift; sourceTree = "<group>"; };
 		A22F86B028A776CF00C31330 /* AttackCollectionUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttackCollectionUtility.swift; sourceTree = "<group>"; };
@@ -76,6 +75,7 @@
 		A2B226B128B6B64100C7CA99 /* CardCollection.csv */ = {isa = PBXFileReference; lastKnownFileType = text; name = CardCollection.csv; path = Haymaker2/CSVs/CardCollection.csv; sourceTree = SOURCE_ROOT; };
 		A2B226B328B717C800C7CA99 /* CardCollectionUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardCollectionUtility.swift; sourceTree = "<group>"; };
 		A2B226B528B729B300C7CA99 /* EquipmentUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EquipmentUtility.swift; sourceTree = "<group>"; };
+		A2B226B728B8757400C7CA99 /* BuffUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BuffUtility.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -173,7 +173,7 @@
 				A2B226A928B46DEA00C7CA99 /* RaceUtility.swift */,
 				A22F86AC28A771E600C31330 /* AttributesUtility.swift */,
 				A22F86AE28A7726700C31330 /* StatusUtility.swift */,
-				A22B973228110D2800F70B0F /* PowerUtility.swift */,
+				A2B226B728B8757400C7CA99 /* BuffUtility.swift */,
 				A2796EC228A60B250032CB2C /* CardUtility.swift */,
 				A2B226B328B717C800C7CA99 /* CardCollectionUtility.swift */,
 				A2796EC028A60B170032CB2C /* DeckUtility.swift */,
@@ -274,9 +274,9 @@
 				A22F86B528A89C8600C31330 /* GearCollectionUtility.swift in Sources */,
 				A2B226B428B717C800C7CA99 /* CardCollectionUtility.swift in Sources */,
 				A236E47128AA12F500A68BD9 /* RarityUtility.swift in Sources */,
+				A2B226B828B8757400C7CA99 /* BuffUtility.swift in Sources */,
 				A236E47328AA13E800A68BD9 /* CurrencyUtility.swift in Sources */,
 				A2AE05C528A35B2B0018E205 /* CombatUtility.swift in Sources */,
-				A22B973328110D2800F70B0F /* PowerUtility.swift in Sources */,
 				A2796EC128A60B170032CB2C /* DeckUtility.swift in Sources */,
 				A22F86B928A89E0600C31330 /* WeaponCollectionUtility.swift in Sources */,
 				A22F86B128A776CF00C31330 /* AttackCollectionUtility.swift in Sources */,

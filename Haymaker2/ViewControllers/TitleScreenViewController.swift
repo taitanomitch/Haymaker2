@@ -19,6 +19,7 @@ class TitleScreenViewController: UIViewController {
         print(AttackCollecton.getAttackFromDictionary(AttackID: AttackIDToCheck).AttackName)
         print(AttackCollecton.getAttackFromDictionary(AttackID: AttackIDToCheck).AttackClass)
         print(AttackCollecton.getAttackFromDictionary(AttackID: AttackIDToCheck).AttackDamageDie)
+        print(AttackCollecton.getAttackFromDictionary(AttackID: AttackIDToCheck).AttackBuff.BuffName)
         
         print("")
         

@@ -16,11 +16,17 @@ class Paragon: NSObject {
     var ParagonStatusManager: StatusManager
     
     var ParagonBaseAttributes: AttributesManager //Atributes from Paragon alone
-    var ParagonWeaponAttributes: AttributesManager //Attributes Given By Gear
+    var ParagonWeaponAttributes: AttributesManager //Attributes Given By Weapons
     var ParagonGearAttributes: AttributesManager //Attributes Given By Gear
-    var ParagonTotalAttributes: AttributesManager //Attributes from Base + Gear
-    var ParagonCombatAttributes: AttributesManager //Total Attributes Used For Combat
+    var ParagonTotalAttributes: AttributesManager //Attributes from Base + Gear + Weapons
+    
+    var ParagonCombatAttributes: AttributesManager //Total Attributes Used For Combat (Damage dealt to the Paragon will be applied here)
     var ParagonTemporaryAttributes: AttributesManager //Attributes gained during combat
+    
+    var ParagonBuffs: [Buff] = []
+    var ParagonBuffAttributes: AttributesManager //Attributes from all Buffs
+    var ParagonDebuffs: [Buff] = []
+    var ParagonDebuffAttributes: AttributesManager //Attributes from all Debuffs
     
     var ParagonAttackSetFromBase: AttackSet
     var ParagonAttackSetFromWeapon: AttackSet
@@ -44,6 +50,8 @@ class Paragon: NSObject {
         ParagonTotalAttributes = AttributesManager()
         ParagonCombatAttributes = AttributesManager()
         ParagonTemporaryAttributes = AttributesManager()
+        ParagonBuffAttributes = AttributesManager()
+        ParagonDebuffAttributes = AttributesManager()
         ParagonStatusManager = StatusManager()
         ParagonAttackSet = AttackSet()
         ParagonAttackSetFromBase = AttackSet()
@@ -94,6 +102,11 @@ class Paragon: NSObject {
         ParagonStatusManager = StatusManager()
     }
     
+    func prepareBuffsAndDebuffs() {
+        ParagonBuffs = []
+        ParagonDebuffs = []
+    }
+    
     
     //MARK: - Start & End Turn Functions
     func functionsForStartOfTurn() {
@@ -101,6 +114,12 @@ class Paragon: NSObject {
         resetDefenseBonuses()
         self.ParagonStatusManager.decrementStatusCounters(SelfInflicted: true)
         self.ParagonTemporaryAttributes.decrementStrengthWeaknessTurns()
+        for i in 0..<ParagonBuffs.count {
+            ParagonBuffs[i].BuffAttributes.decrementStrengthWeaknessTurns()
+        }
+        for i in 0..<ParagonDebuffs.count {
+            ParagonDebuffs[i].BuffAttributes.decrementStrengthWeaknessTurns()
+        }
     }
     
     func functionsForEndOfTurn() {
@@ -140,8 +159,17 @@ class Paragon: NSObject {
         ParagonGearAttributes = ParagonGear.getTotalGearAttributes()
     }
     
+    func calculateBuffAttributes() {
+        
+    }
+    
     func calculateTotalAttributes() {
-        ParagonTotalAttributes = ParagonBaseAttributes.combineWithAttributeManager(AttributesToAdd: ParagonGearAttributes)
+        ParagonTotalAttributes =  combineAttributeManagers(AttributeManagersArray: [ParagonBaseAttributes, ParagonGearAttributes, ParagonWeaponAttributes])
+    }
+    
+    func setEnergy(Value: Int) {
+        self.ParagonTemporaryAttributes.Energy = 0
+        self.ParagonCombatAttributes.Energy = 0
     }
     
     func setAttackBonus(Value: Int) {
@@ -188,39 +216,108 @@ class Paragon: NSObject {
         self.ParagonStatusManager.setStatus(Status: Status, NumberOfTurns: ForNumberOfTurns, SelfInflicted: SelfInflicted)
     }
     
-    func becomeImmuneAll() {
-        self.ParagonStatusManager.ImmuneToMeleeAttacks = true
-        self.ParagonStatusManager.ImmuneToRangedAttacks = true
-        self.ParagonStatusManager.ImmuneToMentalAttacks = true
+    
+    //MARK: - Attribute Combining Functions
+    func combineBuffAttributes(Buffs: [Buff]) {
+        var allBuffAttributesArray: [AttributesManager] = []
+        for i in 0..<Buffs.count {
+            let nextAttribute = Buffs[i].BuffAttributes
+            allBuffAttributesArray.append(nextAttribute)
+        }
+        ParagonBuffAttributes = combineAttributeManagers(AttributeManagersArray: allBuffAttributesArray)
     }
     
-    func becomeImmuneMelee() {
-        self.ParagonStatusManager.ImmuneToMeleeAttacks = true
+    func combineDebuffAttributes(Buffs: [Buff]) {
+        var allBuffAttributesArray: [AttributesManager] = []
+        for i in 0..<Buffs.count {
+            let nextAttribute = Buffs[i].BuffAttributes
+            allBuffAttributesArray.append(nextAttribute)
+        }
+        ParagonDebuffAttributes = combineAttributeManagers(AttributeManagersArray: allBuffAttributesArray)
     }
     
-    func becomeImmuneRanged() {
-        self.ParagonStatusManager.ImmuneToRangedAttacks = true
-    }
-    
-    func becomeImmuneMental() {
-        self.ParagonStatusManager.ImmuneToMentalAttacks = true
-    }
-    
-    func becomeImmuneAllTemporary() {
-        self.ParagonStatusManager.ImmuneToMeleeAttacksTemporary = true
-        self.ParagonStatusManager.ImmuneToRangedAttacksTemporary = true
-        self.ParagonStatusManager.ImmuneToMentalAttacksTemporary = true
-    }
-    
-    func becomeImmuneMeleeTemporary() {
-        self.ParagonStatusManager.ImmuneToMeleeAttacksTemporary = true
-    }
-    
-    func becomeImmuneRangedTemporary() {
-        self.ParagonStatusManager.ImmuneToRangedAttacksTemporary = true
-    }
-    
-    func becomeImmuneMentalTemporary() {
-        self.ParagonStatusManager.ImmuneToMentalAttacksTemporary = true
+    func combineAttributeManagers(AttributeManagersArray: [AttributesManager]) -> AttributesManager {
+        let newAttributeManager: AttributesManager = AttributesManager()
+        for i in 0..<AttributeManagersArray.count {
+            newAttributeManager.Health += AttributeManagersArray[i].Health
+            newAttributeManager.Energy += AttributeManagersArray[i].Energy
+            newAttributeManager.Speed += AttributeManagersArray[i].Speed
+            newAttributeManager.Initiative += AttributeManagersArray[i].Initiative
+            newAttributeManager.HealthRecovery += AttributeManagersArray[i].HealthRecovery
+            newAttributeManager.EnergyRecovery += AttributeManagersArray[i].EnergyRecovery
+            newAttributeManager.Fighting += AttributeManagersArray[i].Fighting
+            newAttributeManager.Sharpshooting += AttributeManagersArray[i].Sharpshooting
+            newAttributeManager.CombatMagic += AttributeManagersArray[i].CombatMagic
+            newAttributeManager.Attack += AttributeManagersArray[i].Attack
+            newAttributeManager.Damage += AttributeManagersArray[i].Damage
+            newAttributeManager.MeleeDefense += AttributeManagersArray[i].MeleeDefense
+            newAttributeManager.RangeDefense += AttributeManagersArray[i].RangeDefense
+            newAttributeManager.Toughness += AttributeManagersArray[i].Toughness
+            newAttributeManager.Willpower += AttributeManagersArray[i].Willpower
+            
+            for i in 0..<AttributeManagersArray[i].ImmuneTypes.count {
+                if !newAttributeManager.ImmuneTypes.contains(AttributeManagersArray[i].ImmuneTypes[i]) {
+                    newAttributeManager.ImmuneTypes.append(AttributeManagersArray[i].ImmuneTypes[i])
+                    newAttributeManager.ImmuneTypesTurns.append(AttributeManagersArray[i].ImmuneTypesTurns[i])
+                } else {
+                    for j in 0..<newAttributeManager.ImmuneTypes.count {
+                        if newAttributeManager.ImmuneTypes[j] == AttributeManagersArray[i].ImmuneTypes[i] {
+                            newAttributeManager.ImmuneTypesTurns[j] += AttributeManagersArray[i].ImmuneTypesTurns[i]
+                        }
+                    }
+                }
+            }
+            
+            for i in (newAttributeManager.ImmuneTypes.count-1)...0 {
+                if newAttributeManager.ImmuneTypesTurns[i] <= 0 {
+                    newAttributeManager.ImmuneTypes.remove(at: i)
+                    newAttributeManager.ImmuneTypesTurns.remove(at: i)
+                }
+            }
+            
+            for i in 0..<AttributeManagersArray[i].StrengthTypes.count {
+                if !newAttributeManager.StrengthTypes.contains(AttributeManagersArray[i].StrengthTypes[i]) {
+                    newAttributeManager.StrengthTypes.append(AttributeManagersArray[i].StrengthTypes[i])
+                    newAttributeManager.StrengthTypesTurns.append(AttributeManagersArray[i].StrengthTypesTurns[i])
+                } else {
+                    for j in 0..<newAttributeManager.StrengthTypes.count {
+                        if newAttributeManager.StrengthTypes[j] == AttributeManagersArray[i].StrengthTypes[i] {
+                            newAttributeManager.StrengthTypesTurns[j] += AttributeManagersArray[i].StrengthTypesTurns[i]
+                        }
+                    }
+                }
+            }
+            
+            for i in (newAttributeManager.StrengthTypes.count-1)...0 {
+                if newAttributeManager.StrengthTypesTurns[i] <= 0 {
+                    newAttributeManager.StrengthTypes.remove(at: i)
+                    newAttributeManager.StrengthTypesTurns.remove(at: i)
+                }
+            }
+
+            for i in 0..<AttributeManagersArray[i].WeaknessTypes.count {
+                if !newAttributeManager.WeaknessTypes.contains(AttributeManagersArray[i].WeaknessTypes[i]) {
+                    newAttributeManager.WeaknessTypes.append(AttributeManagersArray[i].WeaknessTypes[i])
+                    newAttributeManager.WeaknessTypesTurns.append(AttributeManagersArray[i].WeaknessTypesTurns[i])
+                } else {
+                    for j in 0..<newAttributeManager.WeaknessTypes.count {
+                        if newAttributeManager.WeaknessTypes[j] == AttributeManagersArray[i].StrengthTypes[i] {
+                            newAttributeManager.WeaknessTypesTurns[j] += AttributeManagersArray[i].WeaknessTypesTurns[i]
+                        }
+                    }
+                }
+            }
+            
+            for i in (newAttributeManager.WeaknessTypes.count-1)...0 {
+                if newAttributeManager.WeaknessTypesTurns[i] <= 0 {
+                    newAttributeManager.WeaknessTypes.remove(at: i)
+                    newAttributeManager.WeaknessTypesTurns.remove(at: i)
+                }
+            }
+            
+            newAttributeManager.MeleeImmune = newAttributeManager.MeleeImmune || AttributeManagersArray[i].MeleeImmune
+            newAttributeManager.RangeImmune = newAttributeManager.RangeImmune || AttributeManagersArray[i].RangeImmune
+        }
+        return newAttributeManager
     }
 }
