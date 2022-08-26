@@ -22,7 +22,7 @@ class Paragon: NSObject {
     
     var ParagonCombatAttributes: AttributesManager //Total Attributes Used For Combat (Damage dealt to the Paragon will be applied here)
     var ParagonTemporaryAttributes: AttributesManager //Attributes gained during combat
-    var ParagonTemporaryAttributesWithBuffsDebuffs: AttributesManager //Attributes gained during combat
+    var ParagonTemporaryAttributesWithBuffsDebuffs: AttributesManager //Attributes gained during combat + Buff and Debuff Attributes
     
     var ParagonBuffs: [Buff] = []
     var ParagonBuffAttributes: AttributesManager //Attributes from all Buffs
@@ -169,6 +169,15 @@ class Paragon: NSObject {
     func calculateBuffDebuffAttributes() {
         combineBuffAttributes(Buffs: ParagonBuffs)
         combineDebuffAttributes(Buffs: ParagonDebuffs)
+    }
+    
+    
+    //MARK: - Combining Attack Functions
+    func combineAllAttacksIntoAttackSet() {
+        ParagonAttackSet = AttackSet()
+        ParagonAttackSet.addAttacksToAttackSet(ParagonAttacks: ParagonAttackSetFromBase.Attacks, ForParagon: self)
+        ParagonAttackSet.addAttacksToAttackSet(ParagonAttacks: ParagonAttackSetFromWeapon.Attacks, ForParagon: self)
+        ParagonAttackSet.addAttacksToAttackSet(ParagonAttacks: ParagonAttackSetFromClass.Attacks, ForParagon: self)
     }
     
     

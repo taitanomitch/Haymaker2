@@ -192,7 +192,11 @@ class AttackSet {
         Attacks[AtPosition] = Attack
     }
     
-    
+    func addAttacksToAttackSet(ParagonAttacks: [ParagonAttack], ForParagon: Paragon) {
+        for i in 0..<ParagonAttacks.count {
+            setAttack(AtPosition: Attacks.count, Attack: ParagonAttacks[i], ForParagon: ForParagon)
+        }
+    }
 }
 
 class ParagonAttack {
