@@ -22,6 +22,7 @@ class Paragon: NSObject {
     
     var ParagonCombatAttributes: AttributesManager //Total Attributes Used For Combat (Damage dealt to the Paragon will be applied here)
     var ParagonTemporaryAttributes: AttributesManager //Attributes gained during combat
+    var ParagonTemporaryAttributesWithBuffsDebuffs: AttributesManager //Attributes gained during combat
     
     var ParagonBuffs: [Buff] = []
     var ParagonBuffAttributes: AttributesManager //Attributes from all Buffs
@@ -50,6 +51,7 @@ class Paragon: NSObject {
         ParagonTotalAttributes = AttributesManager()
         ParagonCombatAttributes = AttributesManager()
         ParagonTemporaryAttributes = AttributesManager()
+        ParagonTemporaryAttributesWithBuffsDebuffs = AttributesManager()
         ParagonBuffAttributes = AttributesManager()
         ParagonDebuffAttributes = AttributesManager()
         ParagonStatusManager = StatusManager()
@@ -145,12 +147,7 @@ class Paragon: NSObject {
     }
     
     
-    //MARK: - Set Functions
-    func addGear(Gear: Gear) -> Gear {
-        return ParagonGear.addGearToSet(GearToAdd: Gear)
-    }
-    
-    
+    //MARK: - Calculate Attribute Functions
     func calculateWeaponAttributes() {
         ParagonWeaponAttributes = ParagonWeapons.getTotalWeaponAttributes()
     }
@@ -159,65 +156,23 @@ class Paragon: NSObject {
         ParagonGearAttributes = ParagonGear.getTotalGearAttributes()
     }
     
-    func calculateBuffAttributes() {
-        
-    }
-    
     func calculateTotalAttributes() {
         ParagonTotalAttributes =  combineAttributeManagers(AttributeManagersArray: [ParagonBaseAttributes, ParagonGearAttributes, ParagonWeaponAttributes])
     }
     
-    func setEnergy(Value: Int) {
-        self.ParagonTemporaryAttributes.Energy = 0
-        self.ParagonCombatAttributes.Energy = 0
+    func calculateTemporaryAttributesWithBuffsDebuffs() {
+        calculateBuffDebuffAttributes()
+        ParagonTemporaryAttributesWithBuffsDebuffs = combineAttributeManagers(AttributeManagersArray: [ParagonTemporaryAttributes, ParagonBuffAttributes])
+        ParagonTemporaryAttributesWithBuffsDebuffs = combineAttributeManagerWithDebuffs(Attributes: ParagonTemporaryAttributesWithBuffsDebuffs, DebuffAttributes: ParagonDebuffAttributes)
     }
     
-    func setAttackBonus(Value: Int) {
-        self.ParagonTemporaryAttributes.Attack = Value
-    }
-    
-    func modifyAttackBonus(Value: Int) {
-        self.ParagonTemporaryAttributes.Attack += Value
-    }
-    
-    func setAttackDamageBonus(Value: Int) {
-        self.ParagonTemporaryAttributes.Damage = Value
-    }
-    
-    func modifyAttackDamageBonus(Value: Int) {
-        self.ParagonTemporaryAttributes.Damage += Value
-    }
-    
-    func setMeleeDefenseBonus(Value: Int) {
-        self.ParagonTemporaryAttributes.MeleeDefense = Value
-    }
-    
-    func modifyMeleeDefenseBonus(Value: Int) {
-        self.ParagonTemporaryAttributes.MeleeDefense += Value
-    }
-    
-    func setRangeDefenseBonus(Value: Int) {
-        self.ParagonTemporaryAttributes.RangeDefense = Value
-    }
-    
-    func modifyRangeDefenseBonus(Value: Int) {
-        self.ParagonTemporaryAttributes.RangeDefense += Value
-    }
-    
-    func setDamageResistanceValueBonus(Value: Int) {
-        self.ParagonTemporaryAttributes.Toughness = Value
-    }
-    
-    func modifyDamageResistanceValueBonus(Value: Int) {
-        self.ParagonTemporaryAttributes.Toughness += Value
-    }
-    
-    func setParagonStatus(Status: ParagonStatus, ForNumberOfTurns: Int, SelfInflicted: Bool) {
-        self.ParagonStatusManager.setStatus(Status: Status, NumberOfTurns: ForNumberOfTurns, SelfInflicted: SelfInflicted)
+    func calculateBuffDebuffAttributes() {
+        combineBuffAttributes(Buffs: ParagonBuffs)
+        combineDebuffAttributes(Buffs: ParagonDebuffs)
     }
     
     
-    //MARK: - Attribute Combining Functions
+    //MARK: - Combining Attribute Functions
     func combineBuffAttributes(Buffs: [Buff]) {
         var allBuffAttributesArray: [AttributesManager] = []
         for i in 0..<Buffs.count {
@@ -234,6 +189,148 @@ class Paragon: NSObject {
             allBuffAttributesArray.append(nextAttribute)
         }
         ParagonDebuffAttributes = combineAttributeManagers(AttributeManagersArray: allBuffAttributesArray)
+    }
+    
+    func combineAttributeManagerWithDebuffs(Attributes: AttributesManager, DebuffAttributes: AttributesManager) -> AttributesManager {
+        let newAttributeManager: AttributesManager = AttributesManager()
+        newAttributeManager.Health = Attributes.Health
+        newAttributeManager.Energy = Attributes.Energy
+        newAttributeManager.Speed = Attributes.Speed
+        newAttributeManager.Initiative = Attributes.Initiative
+        newAttributeManager.HealthRecovery = Attributes.HealthRecovery
+        newAttributeManager.EnergyRecovery = Attributes.EnergyRecovery
+        newAttributeManager.Fighting = Attributes.Fighting
+        newAttributeManager.Sharpshooting = Attributes.Sharpshooting
+        newAttributeManager.CombatMagic = Attributes.CombatMagic
+        newAttributeManager.Attack = Attributes.Attack
+        newAttributeManager.Damage = Attributes.Damage
+        newAttributeManager.MeleeDefense = Attributes.MeleeDefense
+        newAttributeManager.RangeDefense = Attributes.RangeDefense
+        newAttributeManager.Toughness = Attributes.Toughness
+        newAttributeManager.Willpower = Attributes.Willpower
+        newAttributeManager.ImmuneTypes = Attributes.ImmuneTypes
+        newAttributeManager.ImmuneTypesTurns = Attributes.ImmuneTypesTurns
+        newAttributeManager.StrengthTypes = Attributes.StrengthTypes
+        newAttributeManager.StrengthTypesTurns = Attributes.StrengthTypesTurns
+        newAttributeManager.WeaknessTypes = Attributes.WeaknessTypes
+        newAttributeManager.WeaknessTypesTurns = Attributes.WeaknessTypesTurns
+        newAttributeManager.MeleeImmune = Attributes.MeleeImmune
+        newAttributeManager.MeleeImmuneTurns = Attributes.MeleeImmuneTurns
+        newAttributeManager.RangeImmune = Attributes.RangeImmune
+        newAttributeManager.RangeImmuneTurns = Attributes.RangeImmuneTurns
+        
+        newAttributeManager.Health -= DebuffAttributes.Health
+        newAttributeManager.Energy -= DebuffAttributes.Energy
+        newAttributeManager.Speed -= DebuffAttributes.Speed
+        newAttributeManager.Initiative -= DebuffAttributes.Initiative
+        newAttributeManager.HealthRecovery -= DebuffAttributes.HealthRecovery
+        newAttributeManager.EnergyRecovery -= DebuffAttributes.EnergyRecovery
+        newAttributeManager.Fighting -= DebuffAttributes.Fighting
+        newAttributeManager.Sharpshooting -= DebuffAttributes.Sharpshooting
+        newAttributeManager.CombatMagic -= DebuffAttributes.CombatMagic
+        newAttributeManager.Attack -= DebuffAttributes.Attack
+        newAttributeManager.Damage -= DebuffAttributes.Damage
+        newAttributeManager.MeleeDefense -= DebuffAttributes.MeleeDefense
+        newAttributeManager.RangeDefense -= DebuffAttributes.RangeDefense
+        newAttributeManager.Toughness -= DebuffAttributes.Toughness
+        newAttributeManager.Willpower -= DebuffAttributes.Willpower
+        
+        for i in 0..<DebuffAttributes.ImmuneTypes.count {
+            if newAttributeManager.ImmuneTypes.contains(DebuffAttributes.ImmuneTypes[i]) {
+                for j in 0..<newAttributeManager.ImmuneTypes.count {
+                    if newAttributeManager.ImmuneTypes[j] == DebuffAttributes.ImmuneTypes[i] {
+                        newAttributeManager.ImmuneTypesTurns[j] -= DebuffAttributes.ImmuneTypesTurns[i]
+                    }
+                }
+            }
+        }
+        
+        for i in (newAttributeManager.ImmuneTypes.count-1)...0 {
+            if newAttributeManager.ImmuneTypesTurns[i] <= 0 {
+                newAttributeManager.ImmuneTypes.remove(at: i)
+                newAttributeManager.ImmuneTypesTurns.remove(at: i)
+            }
+        }
+        
+        for i in 0..<DebuffAttributes.StrengthTypes.count {
+            if !newAttributeManager.StrengthTypes.contains(DebuffAttributes.StrengthTypes[i]) {
+                if DebuffAttributes.WeaknessTypes.contains(DebuffAttributes.StrengthTypes[i]) {
+                    for j in 0..<DebuffAttributes.WeaknessTypes.count {
+                        if DebuffAttributes.WeaknessTypes[j] == DebuffAttributes.StrengthTypes[i] {
+                            DebuffAttributes.WeaknessTypesTurns[j] += DebuffAttributes.StrengthTypesTurns[i]
+                        }
+                    }
+                } else {
+                    DebuffAttributes.WeaknessTypes.append(DebuffAttributes.StrengthTypes[i])
+                    DebuffAttributes.WeaknessTypesTurns.append(DebuffAttributes.StrengthTypesTurns[i])
+                }
+            } else {
+                for j in 0..<newAttributeManager.StrengthTypes.count {
+                    if newAttributeManager.StrengthTypes[j] == DebuffAttributes.StrengthTypes[i] {
+                        newAttributeManager.StrengthTypesTurns[j] -= DebuffAttributes.StrengthTypesTurns[i]
+                        if newAttributeManager.StrengthTypesTurns[j] < 0 {
+                            let WeaknessTurnsToAdd = newAttributeManager.StrengthTypesTurns[j]
+                            if DebuffAttributes.WeaknessTypes.contains(DebuffAttributes.StrengthTypes[i]) {
+                                for j in 0..<DebuffAttributes.WeaknessTypes.count {
+                                    if DebuffAttributes.WeaknessTypes[j] == DebuffAttributes.StrengthTypes[i] {
+                                        DebuffAttributes.WeaknessTypesTurns[j] += WeaknessTurnsToAdd
+                                    }
+                                }
+                            } else {
+                                DebuffAttributes.WeaknessTypes.append(DebuffAttributes.StrengthTypes[i])
+                                DebuffAttributes.WeaknessTypesTurns.append(WeaknessTurnsToAdd)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        for i in (newAttributeManager.StrengthTypes.count-1)...0 {
+            if newAttributeManager.StrengthTypesTurns[i] <= 0 {
+                newAttributeManager.StrengthTypes.remove(at: i)
+                newAttributeManager.StrengthTypesTurns.remove(at: i)
+            }
+        }
+
+        for i in 0..<DebuffAttributes.WeaknessTypes.count {
+            if !newAttributeManager.WeaknessTypes.contains(DebuffAttributes.WeaknessTypes[i]) {
+                newAttributeManager.WeaknessTypes.append(DebuffAttributes.WeaknessTypes[i])
+                newAttributeManager.WeaknessTypesTurns.append(DebuffAttributes.WeaknessTypesTurns[i])
+            } else {
+                for j in 0..<newAttributeManager.WeaknessTypes.count {
+                    if newAttributeManager.WeaknessTypes[j] == DebuffAttributes.StrengthTypes[i] {
+                        newAttributeManager.WeaknessTypesTurns[j] += DebuffAttributes.WeaknessTypesTurns[i]
+                    }
+                }
+            }
+        }
+        
+        for i in (newAttributeManager.WeaknessTypes.count-1)...0 {
+            if newAttributeManager.WeaknessTypesTurns[i] <= 0 {
+                newAttributeManager.WeaknessTypes.remove(at: i)
+                newAttributeManager.WeaknessTypesTurns.remove(at: i)
+            }
+        }
+        
+        newAttributeManager.MeleeImmuneTurns -= DebuffAttributes.MeleeImmuneTurns
+        newAttributeManager.RangeImmuneTurns -= DebuffAttributes.RangeImmuneTurns
+        
+        if newAttributeManager.MeleeImmuneTurns <= 0 {
+            newAttributeManager.MeleeImmune = false
+            newAttributeManager.MeleeImmuneTurns = 0
+        } else {
+            newAttributeManager.MeleeImmune = true
+        }
+        
+        if newAttributeManager.RangeImmuneTurns <= 0 {
+            newAttributeManager.RangeImmune = false
+            newAttributeManager.RangeImmuneTurns = 0
+        } else {
+            newAttributeManager.RangeImmune = true
+        }
+
+        return newAttributeManager
     }
     
     func combineAttributeManagers(AttributeManagersArray: [AttributesManager]) -> AttributesManager {
@@ -319,5 +416,67 @@ class Paragon: NSObject {
             newAttributeManager.RangeImmune = newAttributeManager.RangeImmune || AttributeManagersArray[i].RangeImmune
         }
         return newAttributeManager
+    }
+    
+    
+    //MARK: - Weapon Functions
+    
+    
+    //MARK: - Gear Functions
+    func addGear(Gear: Gear) -> Gear {
+        return ParagonGear.addGearToSet(GearToAdd: Gear)
+    }
+    
+    
+    //MARK: - Set Functions
+    func setParagonStatus(Status: ParagonStatus, ForNumberOfTurns: Int, SelfInflicted: Bool) {
+        self.ParagonStatusManager.setStatus(Status: Status, NumberOfTurns: ForNumberOfTurns, SelfInflicted: SelfInflicted)
+    }
+    
+    func setEnergy(Value: Int) {
+        self.ParagonTemporaryAttributes.Energy = 0
+        self.ParagonCombatAttributes.Energy = 0
+    }
+    
+    func setAttackBonus(Value: Int) {
+        self.ParagonTemporaryAttributes.Attack = Value
+    }
+    
+    func setAttackDamageBonus(Value: Int) {
+        self.ParagonTemporaryAttributes.Damage = Value
+    }
+    
+    func setMeleeDefenseBonus(Value: Int) {
+        self.ParagonTemporaryAttributes.MeleeDefense = Value
+    }
+    
+    func setRangeDefenseBonus(Value: Int) {
+        self.ParagonTemporaryAttributes.RangeDefense = Value
+    }
+    
+    func setDamageResistanceValueBonus(Value: Int) {
+        self.ParagonTemporaryAttributes.Toughness = Value
+    }
+    
+    
+    //MARK: - Modify Functions
+    func modifyAttackBonus(Value: Int) {
+        self.ParagonTemporaryAttributes.Attack += Value
+    }
+    
+    func modifyAttackDamageBonus(Value: Int) {
+        self.ParagonTemporaryAttributes.Damage += Value
+    }
+    
+    func modifyMeleeDefenseBonus(Value: Int) {
+        self.ParagonTemporaryAttributes.MeleeDefense += Value
+    }
+    
+    func modifyRangeDefenseBonus(Value: Int) {
+        self.ParagonTemporaryAttributes.RangeDefense += Value
+    }
+    
+    func modifyDamageResistanceValueBonus(Value: Int) {
+        self.ParagonTemporaryAttributes.Toughness += Value
     }
 }

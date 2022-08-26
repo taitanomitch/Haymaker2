@@ -579,23 +579,6 @@ class CombatOverseer {
         return HighestDamage
     }
     
-    func ClearAttackBonuses(Combatant: Int) {
-        Combatants[Combatant].resetAttackBonuses()
-    }
-    
-    func ClearDefenseBonuses(Combatant: Int) {
-        Combatants[Combatant].resetDefenseBonuses()
-    }
-    
-    func ClearParagonStatusEffect(Combatant: Int) {
-        Combatants[Combatant].ParagonStatusManager.setStatusToNormal()
-    }
-    
-    func ClearParagonDamageLastTurnFlag(Combatant: Int) {
-        Combatants[Combatant].ParagonStatusManager.ReceivedDamageSinceLastTurn = false
-    }
-    
-    
     //MARK: - Set Functions - Current Combatant
     func SetAttackBonusForCurrentCombatant(Value: Int) {
         SetAttackBonus(Combatant: CurrentCombatant, Value: Value)

@@ -37,7 +37,6 @@ class TitleScreenViewController: UIViewController {
         print(WeaponDictionary[TestWeapon]!.PrimaryAttack.AttackDamageDie)
     }
     
-    
     // MARK: Setup Functions
     func runSetup() {
         setUpButtonUI()

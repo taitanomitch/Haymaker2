@@ -211,20 +211,20 @@ class AttackCollection {
         let CreatedBuff: Buff = Buff(BuffName: BuffName, BuffTurns: BuffTurns, BuffAttributes: CreatedBuffAttributes)
         
         let DebuffName = (CreatedAttackName + " Debuff")
-        let DebuffHealth: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffHealthPos])! * -1
-        let DebuffEnergy: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffEnergyPos])! * -1
-        let DebuffSpeed: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffSpeedPos])! * -1
-        let DebuffHealthRecovery: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffHealthRecoveryPos])! * -1
-        let DebuffEnergyRecovery: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffEnergyRecoveryPos])! * -1
-        let DebuffAttack: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffAttackPos])! * -1
-        let DebuffDamage: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffDamagePos])! * -1
-        let DebuffFighting: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffFightingPos])! * -1
-        let DebuffSharpshooting: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffSharpshootingPos])! * -1
-        let DebuffCombatMagic: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffCombatMagicPos])! * -1
-        let DebuffMeleeDefense: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffMeleeDefensePos])! * -1
-        let DebuffRangeDefense: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffRangeDefensePos])! * -1
-        let DebuffToughness: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffToughnessPos])! * -1
-        let DebuffWillpower: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffWillpowerPos])! * -1
+        let DebuffHealth: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffHealthPos])!
+        let DebuffEnergy: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffEnergyPos])!
+        let DebuffSpeed: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffSpeedPos])!
+        let DebuffHealthRecovery: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffHealthRecoveryPos])!
+        let DebuffEnergyRecovery: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffEnergyRecoveryPos])!
+        let DebuffAttack: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffAttackPos])! 
+        let DebuffDamage: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffDamagePos])!
+        let DebuffFighting: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffFightingPos])!
+        let DebuffSharpshooting: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffSharpshootingPos])!
+        let DebuffCombatMagic: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffCombatMagicPos])!
+        let DebuffMeleeDefense: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffMeleeDefensePos])!
+        let DebuffRangeDefense: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffRangeDefensePos])!
+        let DebuffToughness: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffToughnessPos])!
+        let DebuffWillpower: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffWillpowerPos])!
         
         let DebuffImmuneTypesStringArray: [String] = (AttackCollectionArray[AttackPosition][CSVPositions.AttackDebuffImmuneTypesPos]).components(separatedBy: "|")
         var DebuffImmuneTypes: [AttackType] = []
