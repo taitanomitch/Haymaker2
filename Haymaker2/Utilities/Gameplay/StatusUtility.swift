@@ -15,6 +15,7 @@ enum ParagonStatus: String {
     case Hurt //?
     case Prone //Movement Speed is 0
     case Defenseless //Make no defense roll. Automatically hit
+    case WeaknessExploited //Melee and Range Defense is 1 and cannot be increased
     case Slowed //Movement is 50%
     case Held //Cannot Move
     case Petrified //Turned to stone. Cannot act.
@@ -24,7 +25,6 @@ enum ParagonStatus: String {
     case Blind //
     case Winded //Skip Recovery Step of turn
     case Cursed //?
-    case Sprinting //Double all movement
     case Counterattacking //Whenever an attack is dodged, deal Base Damage + Damage Die back to the attacker (ONLY if Primary Weapon is in range)
     case Healed //?
     case Restored //?

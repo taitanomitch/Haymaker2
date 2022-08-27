@@ -84,6 +84,21 @@ class WeaponSet {
         self.AllWeapons = Weapons
     }
     
+    func addWeaponToSet(WeaponToAdd: Weapon, ToHand: WeaponHand) -> Weapon {
+        switch ToHand {
+        case .MainHand:
+            return WeaponToAdd
+        case .TwoHand:
+            return WeaponToAdd
+        case .OneHand:
+            return WeaponToAdd
+        case .OffHand:
+            return WeaponToAdd
+        case .None:
+            return WeaponToAdd
+        }
+    }
+    
     func getTotalWeaponAttributes() -> AttributesManager {
         let TotalWeaponAttributes: AttributesManager = AttributesManager()
         for nextWeapon in AllWeapons {

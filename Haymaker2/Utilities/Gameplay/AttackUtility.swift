@@ -208,7 +208,9 @@ class ParagonAttack {
     var AttackName: String = ""
     var AttackClass: AttackClass = .Fighting
     var AttackDifficulty: Int = 0
+    var BaseAttackValue: Int = 0
     var AttackValue: Int = 0
+    var BaseAttackBaseDamage: Int = 0
     var AttackBaseDamage: Int = 0
     var AttackDamageDie: String = "0d0"
     var AttackBonusMeleeDefense: Int = 0
@@ -265,7 +267,9 @@ class ParagonAttack {
         self.AttackClass = AttackClass
         self.AttackDifficulty = AttackDifficulty
         self.AttackValue = AttackValue
+        self.BaseAttackValue = AttackValue
         self.AttackBaseDamage = AttackBaseDamage
+        self.BaseAttackBaseDamage = AttackBaseDamage
         self.AttackDamageDie = AttackDamageDie
         self.AttackUsesPrimaryWeaponAttack = AttackUsesPrimaryWeaponAttack
         self.AttackEnergyCost = AttackEnergyCost
@@ -325,29 +329,31 @@ class ParagonAttack {
     }
     
     func completeAttackValuesForParagon(Paragon: Paragon) {
+        self.AttackValue = self.BaseAttackValue
+        self.AttackBaseDamage = self.BaseAttackBaseDamage
         switch self.AttackClass {
         case .Fighting:
-            self.AttackValue += (Paragon.ParagonTotalAttributes.Fighting - self.AttackDifficulty)
-            self.AttackBaseDamage += (Paragon.ParagonTotalAttributes.Fighting / 2)
+            self.AttackValue += ((Paragon.ParagonTotalAttributes.Fighting + Paragon.ParagonTemporaryAttributes.Fighting) - self.AttackDifficulty)
+            self.AttackBaseDamage += ((Paragon.ParagonTotalAttributes.Fighting + Paragon.ParagonTemporaryAttributes.Fighting) / 2)
         case .Sharpshooting:
-            self.AttackValue += (Paragon.ParagonTotalAttributes.Sharpshooting - self.AttackDifficulty)
-            self.AttackBaseDamage += (Paragon.ParagonTotalAttributes.Sharpshooting / 2)
+            self.AttackValue += ((Paragon.ParagonTotalAttributes.Sharpshooting + Paragon.ParagonTemporaryAttributes.Sharpshooting) - self.AttackDifficulty)
+            self.AttackBaseDamage += ((Paragon.ParagonTotalAttributes.Sharpshooting + Paragon.ParagonTemporaryAttributes.Sharpshooting) / 2)
         case .CombatMagic:
-            self.AttackValue += (Paragon.ParagonTotalAttributes.CombatMagic - self.AttackDifficulty)
-            self.AttackBaseDamage += (Paragon.ParagonTotalAttributes.CombatMagic / 2)
+            self.AttackValue += ((Paragon.ParagonTotalAttributes.CombatMagic + Paragon.ParagonTemporaryAttributes.CombatMagic) - self.AttackDifficulty)
+            self.AttackBaseDamage += ((Paragon.ParagonTotalAttributes.CombatMagic + Paragon.ParagonTemporaryAttributes.CombatMagic) / 2)
         case .None:
             return
         }
         
         switch self.AttackMovementSpeedHinderance {
         case .FullSpeed:
-            self.AttackMovementDistance = Paragon.ParagonTotalAttributes.Speed
+            self.AttackMovementDistance = (Paragon.ParagonTotalAttributes.Speed + Paragon.ParagonTemporaryAttributes.Speed)
         case .ThreeFourSpeed:
-            self.AttackMovementDistance = (Paragon.ParagonTotalAttributes.Speed * 3) / 4
+            self.AttackMovementDistance = ((Paragon.ParagonTotalAttributes.Speed + Paragon.ParagonTemporaryAttributes.Speed) * 3) / 4
         case .HalfSpeed:
-            self.AttackMovementDistance = (Paragon.ParagonTotalAttributes.Speed / 2)
+            self.AttackMovementDistance = ((Paragon.ParagonTotalAttributes.Speed + Paragon.ParagonTemporaryAttributes.Speed) / 2)
         case .QuarterSpeed:
-            self.AttackMovementDistance = (Paragon.ParagonTotalAttributes.Speed / 4)
+            self.AttackMovementDistance = ((Paragon.ParagonTotalAttributes.Speed + Paragon.ParagonTemporaryAttributes.Speed) / 4)
         case .ZeroSpeed:
             self.AttackMovementDistance = 0
         }

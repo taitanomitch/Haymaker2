@@ -23,4 +23,10 @@ class Buff {
         self.BuffAttributes = BuffAttributes
     }
     
+    func decrementBuffTurns() {
+        BuffTurns = BuffTurns - 1
+        if BuffTurns <= 0 {
+            
+        }
+    }
 }
