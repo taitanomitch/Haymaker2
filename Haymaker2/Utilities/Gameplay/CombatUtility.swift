@@ -8,7 +8,16 @@
 import Foundation
 import UIKit
 
-class CombatOverseer {
+protocol CombatProtocol {
+    func drawCardsForParagon(Combatant: Int, NumberOfCards: Int)
+    func moveParagonByProtocol(Combatant: Int, MoveDistance: Double)
+    func restoreHealthToParagon(Combatant: Int, HealthAmount: Int)
+    func restoreEnergyToParagon(Combatant: Int, EnergyAmount: Int)
+    func restoreAttackPointsofAttacks(NumberOfAttacks: Int)
+    func addBuffToCombatant(Combatant: Int, Buff: Buff)
+}
+
+class CombatOverseer: CombatProtocol {
     
     //MARK: - Variable Constants
     var MINIMUM_STARTING_POSISITION: Double = 0
@@ -227,7 +236,7 @@ class CombatOverseer {
         if AttackSuccess {
             CalculateAndInflictAttackDamage(AttackingCombatant: AttackingCombatant, DefendingCombatant: DefendingCombatant, AttackUsed: AttackUsed)
         } else if Combatants[DefendingCombatant].ParagonStatusManager.hasStatus(Status: .Counterattacking) {
-            let CounterAttackDamage = GetLowestDamageValueForParagonAttacks(Paragon: Combatants[DefendingCombatant])
+            let CounterAttackDamage = GetLowestDamageValueForParagonCounterAttack(Paragon: Combatants[DefendingCombatant])
             InflictDamageFromCombatant(AttackingCombatant: DefendingCombatant, DefendingCombatant: AttackingCombatant, DamageToInflict: CounterAttackDamage)
         }
     }
@@ -559,26 +568,55 @@ class CombatOverseer {
         }
     }
     
-    func GetLowestDamageValueForParagonAttacks(Paragon: Paragon) -> Int {
-        var LowestDamage = 1000
+    func GetLowestDamageValueForParagonCounterAttack(Paragon: Paragon) -> Int {
+        let DiceUtility = DiceUtility()
+        var LowestDamage = 9999
         for nextAttack in Paragon.ParagonAttackSet.Attacks {
-            if nextAttack.AttackBaseDamage < LowestDamage {
-                LowestDamage = nextAttack.AttackBaseDamage
+            let nextDamage = nextAttack.AttackBaseDamage + DiceUtility.Roll_DNUM(DieToRoll: nextAttack.AttackDamageDie)
+            if nextDamage < LowestDamage {
+                LowestDamage = nextDamage
             }
         }
         return LowestDamage
     }
     
-    func GetHighestDamageValueForParagonAttacks(Paragon: Paragon) -> Int {
-        var HighestDamage = -1
-        for nextAttack in Paragon.ParagonAttackSet.Attacks {
-            if nextAttack.AttackBaseDamage > HighestDamage {
-                HighestDamage = nextAttack.AttackBaseDamage
+    func GetCombatantsInAoERange(Combatant: Int, Range: Double) -> [Int] {
+        var CombatantsInAOERange: [Int] = []
+        for i in 0..<CombatDistances[Combatant].count {
+            if Combatant != i && CombatDistances[Combatant][i] <= Range {
+                CombatantsInAOERange.append(i)
             }
         }
-        return HighestDamage
+        return CombatantsInAOERange
     }
+    
     
     //MARK: - Buff Debuff Functions
     
+    
+    
+    //MARK: - Protocol Functions
+    func drawCardsForParagon(Combatant: Int, NumberOfCards: Int) {
+        
+    }
+    
+    func moveParagonByProtocol(Combatant: Int, MoveDistance: Double) {
+        MoveCombatant(AttackingParagon: Combatant, DefendingParagon: CombatantTarget[Combatant], DistanceToMove: MoveDistance)
+    }
+    
+    func restoreHealthToParagon(Combatant: Int, HealthAmount: Int) {
+        Combatants[Combatant].addHealth(Amount: HealthAmount)
+    }
+    
+    func restoreEnergyToParagon(Combatant: Int, EnergyAmount: Int) {
+        Combatants[Combatant].addEnergy(Amount: EnergyAmount)
+    }
+    
+    func restoreAttackPointsofAttacks(NumberOfAttacks: Int) {
+        
+    }
+    
+    func addBuffToCombatant(Combatant: Int, Buff: Buff) {
+        Combatants[Combatant].addBuffToBuffs(BuffToAdd: Buff)
+    }
 }

@@ -71,7 +71,12 @@ class CardCollectionUtility {
         let CardsInDeckCount: Int = Int(CardCollectionArray[CardPosition][CSVPositions.CardsInDeckCountPos])!
         CardCountInDeckDictionary[CardID] = CardsInDeckCount
         
-        let CreatedCardEffect: CardEffect = CardEffect(rawValue: CardCollectionArray[CardPosition][CSVPositions.CardEffectTypePos])!
+        let CardCreatedCardEffectsStringArray: [String] = (CardCollectionArray[CardPosition][CSVPositions.CardEffectTypePos]).components(separatedBy: "|")
+        var CreatedCardEffects: [CardEffect] = []
+        for i in 0..<CardCreatedCardEffectsStringArray.count {
+            CreatedCardEffects.append(CardEffect(rawValue: CardCreatedCardEffectsStringArray[i])!)
+        }
+        
         let CreatedCardTarget: CardTarget = CardTarget(rawValue: CardCollectionArray[CardPosition][CSVPositions.CardTargetPos])!
         let CreatedMoveDirection: MoveDirection = MoveDirection(rawValue: CardCollectionArray[CardPosition][CSVPositions.CardMoveDirectionPos])!
         let CreatedValueType: ValueType = ValueType(rawValue: CardCollectionArray[CardPosition][CSVPositions.CardValueTypePos])!
@@ -106,7 +111,7 @@ class CardCollectionUtility {
             CreatedCardStatusToTargetTurns.append(Int(CardStatusToTargetTurnsStringArray[i])!)
         }
         
-        let CreatedCard = ParagonCard(CardID: CardID, CardImageString: String(CardCollectionArray[CardPosition][CSVPositions.CardImageStringPos]), CardName: String(CardCollectionArray[CardPosition][CSVPositions.CardNamePos]), CardEffect: CreatedCardEffect, CardTarget: CreatedCardTarget, CardBuffTypes: CreatedCardBuffTypes, CardStatusToSelf: CreatedCardStatusToSelf, CardStatusToSelfTurns: CreatedCardStatusToSelfTurns, CardStatusToTarget: CreatedCardStatusToTarget, CardStatusToTargetTurns: CreatedCardStatusToTargetTurns, CardMoveDirection: CreatedMoveDirection, CardValue: Int(CardCollectionArray[CardPosition][CSVPositions.CardValuePos])!, CardValueType: CreatedValueType, CardMinimumRange: Int(CardCollectionArray[CardPosition][CSVPositions.CardMinimumRangePos])!, CardMaximumRange: Int(CardCollectionArray[CardPosition][CSVPositions.CardMaximumRangePos])!, CardEffectTextString: String(CardCollectionArray[CardPosition][CSVPositions.CardEffectTextPos]))
+        let CreatedCard = ParagonCard(CardID: CardID, CardImageString: String(CardCollectionArray[CardPosition][CSVPositions.CardImageStringPos]), CardName: String(CardCollectionArray[CardPosition][CSVPositions.CardNamePos]), CardEffect: CreatedCardEffects, CardTarget: CreatedCardTarget, CardBuffTypes: CreatedCardBuffTypes, CardStatusToSelf: CreatedCardStatusToSelf, CardStatusToSelfTurns: CreatedCardStatusToSelfTurns, CardStatusToTarget: CreatedCardStatusToTarget, CardStatusToTargetTurns: CreatedCardStatusToTargetTurns, CardMoveDirection: CreatedMoveDirection, CardValue: Int(CardCollectionArray[CardPosition][CSVPositions.CardValuePos])!, CardValueType: CreatedValueType, CardMinimumRange: Int(CardCollectionArray[CardPosition][CSVPositions.CardMinimumRangePos])!, CardMaximumRange: Int(CardCollectionArray[CardPosition][CSVPositions.CardMaximumRangePos])!, CardEffectTextString: String(CardCollectionArray[CardPosition][CSVPositions.CardEffectTextPos]))
         
         return CreatedCard
     }

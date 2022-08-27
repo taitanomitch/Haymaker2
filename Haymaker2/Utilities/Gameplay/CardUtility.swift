@@ -12,10 +12,8 @@ enum CardEffect: String {
     case RestoreEnergy
     case RestoreHealth
     case RestoreAttackPoints
-    case SetEnergy
     case Move
     case Buff
-    case BuffSetValues
     case Status
     case None
 }
@@ -23,15 +21,14 @@ enum CardEffect: String {
 enum CardTarget: String {
     case TargetSelf
     case TargetTarget
-    case Both
-    case AOEFromSelf
-    case AOEFromTarget
     case None
 }
 
 enum MoveDirection: String {
-    case Toward
-    case Away
+    case TowardTarget
+    case TowardAttacker
+    case AwayFromTarget
+    case AwayFromAttacker
     case None
 }
 
@@ -44,11 +41,13 @@ enum ValueType: String {
 }
 
 enum CardBuffType: String {
-    case Attack
-    case Damage
+    case Health
+    case Energy
     case Speed
     case HealthRecovery
     case EnergyRecovery
+    case Attack
+    case Damage
     case Fighting
     case Sharpshooting
     case CombatMagic
@@ -61,10 +60,12 @@ enum CardBuffType: String {
 
 class ParagonCard {
     
+    var CardCombatProtocol: CombatProtocol?
+    
     var CardID: String
     var CardImageString: String
     var CardName: String
-    var CardEffect: CardEffect
+    var CardEffect: [CardEffect]
     var CardTarget: CardTarget
     var CardBuffType: [CardBuffType]
     var CardStatusToSelf: [ParagonStatus]
@@ -82,7 +83,7 @@ class ParagonCard {
         self.CardID = ""
         self.CardImageString = ""
         self.CardName = ""
-        self.CardEffect = .None
+        self.CardEffect = []
         self.CardTarget = .None
         self.CardBuffType = []
         self.CardStatusToSelf = []
@@ -98,7 +99,7 @@ class ParagonCard {
     }
     
 
-    init(CardID: String, CardImageString: String, CardName: String, CardEffect: CardEffect, CardTarget: CardTarget, CardBuffTypes: [CardBuffType], CardStatusToSelf: [ParagonStatus], CardStatusToSelfTurns: [Int], CardStatusToTarget: [ParagonStatus], CardStatusToTargetTurns: [Int], CardMoveDirection: MoveDirection, CardValue: Int, CardValueType: ValueType, CardMinimumRange: Int, CardMaximumRange: Int, CardEffectTextString: String) {
+    init(CardID: String, CardImageString: String, CardName: String, CardEffect: [CardEffect], CardTarget: CardTarget, CardBuffTypes: [CardBuffType], CardStatusToSelf: [ParagonStatus], CardStatusToSelfTurns: [Int], CardStatusToTarget: [ParagonStatus], CardStatusToTargetTurns: [Int], CardMoveDirection: MoveDirection, CardValue: Int, CardValueType: ValueType, CardMinimumRange: Int, CardMaximumRange: Int, CardEffectTextString: String) {
         self.CardID = CardID
         self.CardImageString = CardImageString
         self.CardName = CardName
@@ -117,7 +118,107 @@ class ParagonCard {
         self.CardEffectTextString = CardEffectTextString
     }
     
-    func PlayCard(AttackingParagon: Paragon, DefendingParagon: Paragon) {
-        
+    func PlayCard(AttackingParagon: Paragon, AttackingCombatant: Int, DefendingParagon: Paragon, DefendingCombatant: Int) {
+        for i in 0..<CardEffect.count {
+            switch  CardEffect[i] {
+            case .CardDraw:
+                CardCombatProtocol?.drawCardsForParagon(Combatant: AttackingCombatant, NumberOfCards: CardValue)
+            case .RestoreEnergy:
+                var CombatantToRestoreEnergy: Int = -1
+                var CombatantMaxEnergy: Int = -1
+                if CardTarget == .TargetSelf {
+                    CombatantToRestoreEnergy = AttackingCombatant
+                    CombatantMaxEnergy = AttackingParagon.MaxEnergy
+                } else if CardTarget == .TargetTarget {
+                    CombatantToRestoreEnergy = DefendingCombatant
+                    CombatantMaxEnergy = DefendingParagon.MaxEnergy
+                }
+                var AmountToRestore: Int = 0
+                if CardValueType == .Percent {
+                    AmountToRestore = (CombatantMaxEnergy * CardValue) / 100
+                } else {
+                    AmountToRestore = CardValue
+                }
+                CardCombatProtocol?.restoreEnergyToParagon(Combatant: CombatantToRestoreEnergy, EnergyAmount: AmountToRestore)
+            case .RestoreHealth:
+                var CombatantToRestoreHealth: Int = -1
+                var CombatantMaxHealth: Int = -1
+                if CardTarget == .TargetSelf {
+                    CombatantToRestoreHealth = AttackingCombatant
+                    CombatantMaxHealth = AttackingParagon.MaxHealth
+                } else if CardTarget == .TargetTarget {
+                    CombatantToRestoreHealth = DefendingCombatant
+                    CombatantMaxHealth = DefendingParagon.MaxHealth
+                }
+                var AmountToRestore: Int = 0
+                if CardValueType == .Percent {
+                    AmountToRestore = (CombatantMaxHealth * CardValue) / 100
+                } else {
+                    AmountToRestore = CardValue
+                }
+                CardCombatProtocol?.restoreHealthToParagon(Combatant: CombatantToRestoreHealth, HealthAmount: AmountToRestore)
+            case .RestoreAttackPoints:
+                CardCombatProtocol?.restoreAttackPointsofAttacks(NumberOfAttacks: CardValue)
+            case .Move:
+                var DistanceToMove: Double = 0
+                if CardValueType == .Number {
+                    DistanceToMove = Double(CardValue)
+                } else if CardValueType == .Speed {
+                    DistanceToMove = Double(AttackingParagon.getSpeed())
+                }
+                CardCombatProtocol?.moveParagonByProtocol(Combatant: AttackingCombatant, MoveDistance: DistanceToMove)
+            case .Buff:
+                let BuffAttributes: AttributesManager = AttributesManager()
+                for i in 0..<CardBuffType.count {
+                    switch CardBuffType[i] {
+                    case .Health:
+                        BuffAttributes.Health += CardValue
+                    case .Energy:
+                        BuffAttributes.Energy += CardValue
+                    case .Speed:
+                        BuffAttributes.Speed += CardValue
+                    case .HealthRecovery:
+                        BuffAttributes.HealthRecovery += CardValue
+                    case .EnergyRecovery:
+                        BuffAttributes.EnergyRecovery += CardValue
+                    case .Attack:
+                        BuffAttributes.Attack += CardValue
+                    case .Damage:
+                        BuffAttributes.Damage += CardValue
+                    case .Fighting:
+                        BuffAttributes.Fighting += CardValue
+                    case .Sharpshooting:
+                        BuffAttributes.Sharpshooting += CardValue
+                    case .CombatMagic:
+                        BuffAttributes.CombatMagic += CardValue
+                    case .MeleeDefense:
+                        BuffAttributes.MeleeDefense += CardValue
+                    case .RangeDefense:
+                        BuffAttributes.RangeDefense += CardValue
+                    case .Toughness:
+                        BuffAttributes.Toughness += CardValue
+                    case .Willpower:
+                        BuffAttributes.Willpower += CardValue
+                    case .None:
+                        continue
+                    }
+                }
+                let Buff: Buff = Buff(BuffName: CardName, BuffTurns: 1, BuffAttributes: BuffAttributes)
+                if CardTarget == .TargetSelf {
+                    CardCombatProtocol?.addBuffToCombatant(Combatant: AttackingCombatant, Buff: Buff)
+                } else if CardTarget == .TargetTarget {
+                    CardCombatProtocol?.addBuffToCombatant(Combatant: DefendingCombatant, Buff: Buff)
+                }
+            case .Status:
+                for i in 0..<CardStatusToSelf.count {
+                    AttackingParagon.setParagonStatus(Status: CardStatusToSelf[i], ForNumberOfTurns: CardStatusToSelfTurns[i], SelfInflicted: true)
+                }
+                for i in 0..<CardStatusToTarget.count {
+                    AttackingParagon.setParagonStatus(Status: CardStatusToTarget[i], ForNumberOfTurns: CardStatusToTargetTurns[i], SelfInflicted: false)
+                }
+            case .None:
+                return
+            }
+        }
     }
 }

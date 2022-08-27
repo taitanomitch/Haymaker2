@@ -66,7 +66,7 @@ class Paragon: NSObject {
     var Sharpshooting: Int = 0
     var CombatMagic: Int = 0
     
-    //MARK: - Get Functions
+    //MARK: - Get & Add Functions
     func getAttackValueForAttack(AttackUsed: Int) -> Int {
         return ParagonAttackSet.getAttackValueForAttack(Attack: AttackUsed) + ParagonCombatAttributes.Attack + ParagonTemporaryAttributes.Attack
     }
@@ -79,8 +79,30 @@ class Paragon: NSObject {
         return ParagonCombatAttributes.Health + ParagonTemporaryAttributes.Health
     }
     
+    func addHealth(Amount: Int) {
+        if !self.ParagonStatusManager.StatusList.contains(.Unconscious) {
+            if getHealth() < MaxHealth {
+                ParagonCombatAttributes.Health += Amount
+                if ParagonCombatAttributes.Health > ParagonTotalAttributes.Health {
+                    ParagonCombatAttributes.Health = ParagonTotalAttributes.Health
+                }
+            }
+        }
+    }
+    
     func getEnergy() -> Int {
         return ParagonCombatAttributes.Energy + ParagonTemporaryAttributes.Energy
+    }
+    
+    func addEnergy(Amount: Int) {
+        if !self.ParagonStatusManager.StatusList.contains(.Unconscious) {
+            if getEnergy() < MaxEnergy {
+                ParagonCombatAttributes.Energy += Amount
+                if ParagonCombatAttributes.Energy > ParagonTotalAttributes.Energy {
+                    ParagonCombatAttributes.Energy = ParagonTotalAttributes.Energy
+                }
+            }
+        }
     }
     
     func getSpeed() -> Int {
