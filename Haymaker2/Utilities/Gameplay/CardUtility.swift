@@ -46,6 +46,12 @@ enum ValueType: String {
 enum CardBuffType: String {
     case Attack
     case Damage
+    case Speed
+    case HealthRecovery
+    case EnergyRecovery
+    case Fighting
+    case Sharpshooting
+    case CombatMagic
     case MeleeDefense
     case RangeDefense
     case Toughness
