@@ -369,7 +369,7 @@ class Paragon: NSObject {
                 } else {
                     for j in 0..<newAttributeManager.ImmuneTypes.count {
                         if newAttributeManager.ImmuneTypes[j] == AttributeManagersArray[i].ImmuneTypes[i] {
-                            newAttributeManager.ImmuneTypesTurns[j] += AttributeManagersArray[i].ImmuneTypesTurns[i]
+                            newAttributeManager.ImmuneTypesTurns[j] = (AttributeManagersArray[i].ImmuneTypesTurns[i] > newAttributeManager.ImmuneTypesTurns[j]) ? AttributeManagersArray[i].ImmuneTypesTurns[i] : newAttributeManager.ImmuneTypesTurns[j]
                         }
                     }
                 }
@@ -389,7 +389,7 @@ class Paragon: NSObject {
                 } else {
                     for j in 0..<newAttributeManager.StrengthTypes.count {
                         if newAttributeManager.StrengthTypes[j] == AttributeManagersArray[i].StrengthTypes[i] {
-                            newAttributeManager.StrengthTypesTurns[j] += AttributeManagersArray[i].StrengthTypesTurns[i]
+                            newAttributeManager.StrengthTypesTurns[j] = (AttributeManagersArray[i].StrengthTypesTurns[i] > newAttributeManager.StrengthTypesTurns[j]) ? AttributeManagersArray[i].StrengthTypesTurns[i] : newAttributeManager.StrengthTypesTurns[j]
                         }
                     }
                 }
@@ -408,8 +408,8 @@ class Paragon: NSObject {
                     newAttributeManager.WeaknessTypesTurns.append(AttributeManagersArray[i].WeaknessTypesTurns[i])
                 } else {
                     for j in 0..<newAttributeManager.WeaknessTypes.count {
-                        if newAttributeManager.WeaknessTypes[j] == AttributeManagersArray[i].StrengthTypes[i] {
-                            newAttributeManager.WeaknessTypesTurns[j] += AttributeManagersArray[i].WeaknessTypesTurns[i]
+                        if newAttributeManager.WeaknessTypes[j] == AttributeManagersArray[i].WeaknessTypes[i] {
+                            newAttributeManager.WeaknessTypesTurns[j] = AttributeManagersArray[i].WeaknessTypesTurns[i] > newAttributeManager.WeaknessTypesTurns[j] ? AttributeManagersArray[i].WeaknessTypesTurns[i] : newAttributeManager.WeaknessTypesTurns[j]
                         }
                     }
                 }
@@ -537,7 +537,7 @@ class Paragon: NSObject {
             } else {
                 for j in 0..<newAttributeManager.WeaknessTypes.count {
                     if newAttributeManager.WeaknessTypes[j] == DebuffAttributes.StrengthTypes[i] {
-                        newAttributeManager.WeaknessTypesTurns[j] += DebuffAttributes.WeaknessTypesTurns[i]
+                        newAttributeManager.WeaknessTypesTurns[j] = DebuffAttributes.WeaknessTypesTurns[i] > newAttributeManager.WeaknessTypesTurns[j] ? DebuffAttributes.WeaknessTypesTurns[i] : newAttributeManager.WeaknessTypesTurns[j]
                     }
                 }
             }
