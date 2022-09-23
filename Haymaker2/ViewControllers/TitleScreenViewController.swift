@@ -35,7 +35,6 @@ class TitleScreenViewController: UIViewController {
         let TestWeapon: String = "Example1"
         print(WeaponDictionary[TestWeapon]!.PrimaryAttack.AttackName)
         print(WeaponDictionary[TestWeapon]!.PrimaryAttack.AttackDamageDie)
-        print("Test gits")
     }
     
     // MARK: Setup Functions
