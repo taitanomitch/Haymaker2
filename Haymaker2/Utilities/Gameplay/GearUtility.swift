@@ -121,8 +121,18 @@ class GearSet {
             TotalGearAttributes.RangeDefense += nextGear.GearAttributes.RangeDefense
             TotalGearAttributes.Toughness += nextGear.GearAttributes.Toughness
             TotalGearAttributes.Willpower += nextGear.GearAttributes.Willpower
-            TotalGearAttributes.StrengthTypes.append(contentsOf: nextGear.GearAttributes.StrengthTypes)
-            TotalGearAttributes.WeaknessTypes.append(contentsOf: nextGear.GearAttributes.WeaknessTypes)
+            for i in 0..<TotalGearAttributes.ResistanceAndWeaknessTypes.count {
+                TotalGearAttributes.ResistanceAndWeaknessTypesTurns[i] += nextGear.GearAttributes.ResistanceAndWeaknessTypesTurns[i]
+                TotalGearAttributes.ImmuneTypesTurns[i] += nextGear.GearAttributes.ImmuneTypesTurns[i]
+            }
+            TotalGearAttributes.MeleeImmuneTurns += nextGear.GearAttributes.MeleeImmuneTurns
+            TotalGearAttributes.RangeImmuneTurns += nextGear.GearAttributes.RangeImmuneTurns
+        }
+        if TotalGearAttributes.MeleeImmuneTurns < 0 {
+            TotalGearAttributes.MeleeImmuneTurns = 0
+        }
+        if TotalGearAttributes.RangeImmuneTurns < 0 {
+            TotalGearAttributes.RangeImmuneTurns = 0
         }
         return TotalGearAttributes
     }

@@ -35,15 +35,12 @@ class AttributesManager {
     var Toughness: Int = 0
     var Willpower: Int = 0
     
-    //MARK: - Strength/Weakness Attributes
+    //MARK: - Resistance/Weakness Attributes
     var ImmuneTypes: [AttackType] = []
     var ImmuneTypesTurns: [Int] = []
     
-    var StrengthTypes: [AttackType] = []
-    var StrengthTypesTurns: [Int] = []
-    
-    var WeaknessTypes: [AttackType] = []
-    var WeaknessTypesTurns: [Int] = []
+    var ResistanceAndWeaknessTypes: [AttackType] = []
+    var ResistanceAndWeaknessTypesTurns: [Int] = []
     
     var MeleeImmune: Bool = false
     var MeleeImmuneTurns: Int = 0
@@ -57,69 +54,67 @@ class AttributesManager {
     
     init(Name: String) {
         self.Name = Name
+        
+        setUpResistanceWeaknessTypeArrays()
     }
     
     init(Name: String, ImageString: String) {
         self.Name = Name
         self.Image = ImageString
+        
+        setUpResistanceWeaknessTypeArrays()
     }
     
     init(ID: String, Image: String, Name: String, Health: Int, Energy: Int, Speed: Int, Initiative: Int, HealthRecovery: Int, EnergyRecovery: Int, Attack: Int, Damage: Int, Fighting: Int, Sharpshooting: Int, CombatMagic: Int, MeleeDefense: Int, RangeDefense: Int, Toughness: Int, Willpower: Int, ImmuneTypes: [AttackType], ImmuneTypesTurns: [Int], StrengthTypes: [AttackType], StrengthTypesTurns: [Int], WeaknessTypes: [AttackType], WeaknessTypesTurns: [Int], MeleeImmune: Bool, MeleeImmuneTurns: Int, RangeImmune: Bool, RangeImmuneTurns: Int) {
         
+        setUpResistanceWeaknessTypeArrays()
     }
     
-    func decrementStrengthWeaknessTurns() {
+    func setUpResistanceWeaknessTypeArrays() {
+        for nextType in AttackType.allCases {
+            self.ImmuneTypes.append(nextType)
+            self.ImmuneTypesTurns.append(0)
+            
+            self.ResistanceAndWeaknessTypes.append(nextType)
+            self.ResistanceAndWeaknessTypesTurns.append(0)
+        }
+    }
+    
+    func decrementResistanceAndWeaknessTurns() {
         for i in 0..<ImmuneTypesTurns.count {
-            ImmuneTypesTurns[i] = ImmuneTypesTurns[i] - 1
-            if ImmuneTypesTurns[i] <= 0 {
-                ImmuneTypesTurns[i] = 0
+            if ImmuneTypesTurns[i] != 0 {
+                if ImmuneTypesTurns[i] > 0 {
+                    ImmuneTypesTurns[i] = ImmuneTypesTurns[i] - 1
+                } else {
+                    ImmuneTypesTurns[i] = ImmuneTypesTurns[i] + 1
+                }
             }
         }
-        for i in 0..<StrengthTypesTurns.count {
-            StrengthTypesTurns[i] = StrengthTypesTurns[i] - 1
-            if StrengthTypesTurns[i] <= 0 {
-                StrengthTypesTurns[i] = 0
+        
+        for i in 0..<ResistanceAndWeaknessTypesTurns.count {
+            if ResistanceAndWeaknessTypesTurns[i] != 0 {
+                if ResistanceAndWeaknessTypesTurns[i] > 0 {
+                    ResistanceAndWeaknessTypesTurns[i] = ResistanceAndWeaknessTypesTurns[i] - 1
+                } else {
+                    ResistanceAndWeaknessTypesTurns[i] = ResistanceAndWeaknessTypesTurns[i] + 1
+                }
             }
         }
-        for i in 0..<WeaknessTypesTurns.count {
-            WeaknessTypesTurns[i] = WeaknessTypesTurns[i] - 1
-            if WeaknessTypesTurns[i] <= 0 {
-                WeaknessTypesTurns[i] = 0
-            }
-        }
+        
         MeleeImmuneTurns = MeleeImmuneTurns - 1
         RangeImmuneTurns = RangeImmuneTurns - 1
         
         if MeleeImmuneTurns <= 0 {
             MeleeImmuneTurns = 0
+            MeleeImmune = false
+        } else {
+            MeleeImmune = true
         }
         if RangeImmuneTurns <= 0 {
             RangeImmuneTurns = 0
-        }
-        
-        for i in (ImmuneTypesTurns.count - 1)...0 {
-            if ImmuneTypesTurns[i] <= 0 {
-                ImmuneTypes.remove(at: i)
-                ImmuneTypesTurns.remove(at: i)
-            }
-        }
-        for i in (StrengthTypesTurns.count - 1)...0 {
-            if StrengthTypesTurns[i] <= 0 {
-                StrengthTypes.remove(at: i)
-                StrengthTypesTurns.remove(at: i)
-            }
-        }
-        for i in (WeaknessTypesTurns.count - 1)...0 {
-            if WeaknessTypesTurns[i] <= 0 {
-                WeaknessTypes.remove(at: i)
-                WeaknessTypesTurns.remove(at: i)
-            }
-        }
-        if MeleeImmuneTurns <= 0 {
-            MeleeImmune = false
-        }
-        if RangeImmuneTurns <= 0 {
             RangeImmune = false
+        } else {
+            RangeImmune = true
         }
     }
 }

@@ -223,8 +223,8 @@ class ParagonAttack {
     var AttackTypes: [AttackType] = []
     var AttackDistance: AttackDistance = .Melee
     var AttackIsSelfBuffDebuff: Bool = false
-    var AttackRangeMinumum: Double = 0
-    var AttackRangeMaximum: Double = 0
+    var AttackRangeMinumum: Int = 0
+    var AttackRangeMaximum: Int = 0
     var AttackMovementDistance: Int = 0
     var AttackMovementSpeedHinderance: AttackMovementSpeedHinderance = .HalfSpeed
     var AttackMovementOccasion: AttackMovementOccasion = .BeforeOrAfterAttack
@@ -258,7 +258,7 @@ class ParagonAttack {
         
     }
     
-    init(AttackID: String, AttackParagonClass: String, AttackParagonClassAttackTier: String, AttackName: String, AttackClass: AttackClass, AttackDifficulty: Int, AttackValue: Int, AttackBaseDamage: Int, AttackDamageDie: String, BuffToSelf: Bool, BuffIsForAlly: Bool, BuffIsAOE: Bool, BuffAOEType: AOEType, BuffAOERange: Int, DebuffToSelf: Bool,  DebuffIsForAlly: Bool, DebuffIsAOE: Bool, DebuffAOEType: AOEType, DebuffAOERange: Int, AttackUsesPrimaryWeaponAttack: Bool, AttackEnergyCost: Int, AttackPoints: Int, UnlimitedAttackPoints: Bool, AttackTypes: [AttackType], AttackDistance: AttackDistance, AttackRangeMinimum: Double, AttackRangeMaximum: Double, AttackMovementSpeedHinderance: AttackMovementSpeedHinderance, AttackMovementOccasion: AttackMovementOccasion, AttackActivationPhase: AttackActivationPhase, AttackSelfStatusInfliction: [ParagonStatus], AttackSelfStatusInflictionTurns: [Int], AttackStatusInfliction: [ParagonStatus], AttackStatusInflictionTurns: [Int], NumberOfAttacks: Int, isAOE: Bool, AOEType: AOEType, isUltimate: Bool, isPrimaryAttack: Bool, Buff: Buff, Debuff: Buff) {
+    init(AttackID: String, AttackParagonClass: String, AttackParagonClassAttackTier: String, AttackName: String, AttackClass: AttackClass, AttackDifficulty: Int, AttackValue: Int, AttackBaseDamage: Int, AttackDamageDie: String, BuffToSelf: Bool, BuffIsForAlly: Bool, BuffIsAOE: Bool, BuffAOEType: AOEType, BuffAOERange: Int, DebuffToSelf: Bool,  DebuffIsForAlly: Bool, DebuffIsAOE: Bool, DebuffAOEType: AOEType, DebuffAOERange: Int, AttackUsesPrimaryWeaponAttack: Bool, AttackEnergyCost: Int, AttackPoints: Int, UnlimitedAttackPoints: Bool, AttackTypes: [AttackType], AttackDistance: AttackDistance, AttackRangeMinimum: Int, AttackRangeMaximum: Int, AttackMovementSpeedHinderance: AttackMovementSpeedHinderance, AttackMovementOccasion: AttackMovementOccasion, AttackActivationPhase: AttackActivationPhase, AttackSelfStatusInfliction: [ParagonStatus], AttackSelfStatusInflictionTurns: [Int], AttackStatusInfliction: [ParagonStatus], AttackStatusInflictionTurns: [Int], NumberOfAttacks: Int, isAOE: Bool, AOEType: AOEType, isUltimate: Bool, isPrimaryAttack: Bool, Buff: Buff, Debuff: Buff) {
         self.AttackID = AttackID
         self.AttackImageString = AttackID
         self.AttackParagonClass = AttackParagonClass

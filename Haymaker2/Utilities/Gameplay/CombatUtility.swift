@@ -8,9 +8,13 @@
 import Foundation
 import UIKit
 
+enum CurrentCombatantEnum {
+    case FirstCombatant
+    case SecondCombatant
+}
+
 protocol CombatProtocol {
-    func drawCardsForParagon(Combatant: Int, NumberOfCards: Int)
-    func moveParagonByProtocol(Combatant: Int, MoveDistance: Double)
+    func moveParagonByProtocol(MoveDistance: Int)
     func restoreHealthToParagon(Combatant: Int, HealthAmount: Int)
     func restoreEnergyToParagon(Combatant: Int, EnergyAmount: Int)
     func restoreAttackPointsofAttacks(NumberOfAttacks: Int)
@@ -25,119 +29,78 @@ class CombatOverseer: CombatProtocol {
     var MINIMUM_COMBAT_DISTANCE: Double = 0
     
     //MARK: - Variables
-    var Combatants: [Paragon] = []
-    var CombatantInitiativeRolls: [Int] = []
-    var CombatantInitiativeOrder: [Int] = []
-    var CombatantsCount: Int = 0
-    var CurrentCombatant: Int = 0
-    var CombatantTarget: [Int] = []
-    var CombatantPositions: [[Double]] = [[]]
-    var CombatDistances: [[Double]] = [[]]
-    var CombatantAllies: [[Bool]] = [[]]
+    var FirstCombatants: [Paragon] = []
+    var SecondCombatants: [Paragon] = []
+    var ActiveCombatant: Paragon = Paragon(Name: "")
+    var ActiveFirstCombatant: Int = 0
+    var ActiveSecondCombatant: Int = 0
+    
+    var CombatDistance: Int = 0
+    var FirstCombatantInitiative: Int = 0
+    var SecondCombatantInitiative: Int = 0
+    
+    var StartingInitialCombatDistance: Int = 10
+    var StraringSwapCombatDistance: Int = 10
+    
+    var CurrentCombatant: CurrentCombatantEnum = CurrentCombatantEnum.FirstCombatant
     var CombatantHasMoved: Bool = false
-    var x: Int = 0
-    var y: Int = 1
     
     
     //MARK: - Initialization Functions
-    func InitializeCombatOverseer(InputCombatants: [Paragon]) {
-        InitializeCombatants(InputCombatants: InputCombatants)
-        InitializeCombatantStartingPositions()
-        InitializeCombatDistances()
-        InitializeCombatantTargets()
-        InitializeCombatantAllies()
+    func InitializeCombatOverseer(InputFirstCombatants: [Paragon], InputSecondCombatants: [Paragon]) {
+        InitializeCombatants(InputFirstCombatants: InputFirstCombatants, InputSecondCombatants: InputSecondCombatants)
+        InitializeCombatDistance()
         InitializeInitiativeOrder()
     }
     
-    func InitializeCombatants(InputCombatants: [Paragon]) {
-        Combatants = InputCombatants
-        CombatantsCount = Combatants.count
+    func InitializeCombatants(InputFirstCombatants: [Paragon], InputSecondCombatants: [Paragon]) {
+        FirstCombatants = InputFirstCombatants
+        SecondCombatants = InputSecondCombatants
     }
     
-    func InitializeCombatantAllies() {
-        for i in 0..<CombatantsCount {
-            var NewCombatantAllies: [Bool] = [Bool](repeating: false, count: CombatantsCount)
-            NewCombatantAllies[i] = true
-            CombatantAllies.append(NewCombatantAllies)
-        }
-    }
-    
-    func InitializeCombatantTargets() {
-        for i in 0..<CombatantsCount {
-            if i == CombatantsCount - 1 {
-                CombatantTarget[i] = 0
-            } else {
-                CombatantTarget[i] = i + 1
-            }
-        }
-    }
-    
-    func InitializeCombatDistances() {
-        for i in 0..<CombatantsCount {
-            for j in 0..<CombatantsCount {
-                if i == j {
-                    CombatDistances[i][j] = 0
-                } else {
-                    CombatDistances[i][j] = GetDistanceBetweenCombatants(CombatantA: i, CombatantB: j)
-                    CombatDistances[j][i] = CombatDistances[i][j]
-                }
-            }
-        }
-    }
-    
-    func InitializeCombatantStartingPositions() {
-        for i in 0..<Combatants.count {
-            let newPosition: [Double] = [Double.random(in: MINIMUM_STARTING_POSISITION...MAXIMUM_STARTING_POSISITION).rounded(.down), Double.random(in: MINIMUM_STARTING_POSISITION...MAXIMUM_STARTING_POSISITION).rounded(.down)]
-            CombatantPositions[i] = newPosition
-        }
+    func InitializeCombatDistance() {
+        
     }
     
     func InitializeInitiativeOrder() {
         let dieUtility = DiceUtility()
-        for i in 0..<Combatants.count {
-            CombatantInitiativeRolls[i] = Combatants[i].ParagonCombatAttributes.Initiative + Combatants[i].ParagonTemporaryAttributes.Initiative + dieUtility.Roll_D20()
+        var retryCount = 0
+        FirstCombatantInitiative = 0
+        SecondCombatantInitiative = 0
+        while(FirstCombatantInitiative == SecondCombatantInitiative || retryCount < 10) {
+            FirstCombatantInitiative = dieUtility.Roll_D20()
+            SecondCombatantInitiative = dieUtility.Roll_D20()
+            retryCount = retryCount + 1
         }
-        var tempInitiativeRolls = CombatantInitiativeRolls
-        for i in 0..<Combatants.count {
-            var highestRoll: Int = -10
-            var WinningCombatant: Int = -1
-            for j in 0..<Combatants.count {
-                if tempInitiativeRolls[j] > highestRoll {
-                    highestRoll = tempInitiativeRolls[i]
-                    WinningCombatant = j
-                }
-            }
-            CombatantInitiativeOrder[i] = WinningCombatant
-            tempInitiativeRolls[WinningCombatant] = -10
+        if FirstCombatantInitiative >= SecondCombatantInitiative {
+            ActiveCombatant = FirstCombatants[ActiveFirstCombatant]
+            CurrentCombatant = .FirstCombatant
+        } else {
+            ActiveCombatant = SecondCombatants[ActiveSecondCombatant]
+            CurrentCombatant = .SecondCombatant
         }
     }
     
     //MARK: - Get Functions
     func GetCurrentCombatant() -> Paragon {
-        return Combatants[CurrentCombatant]
+        return CurrentCombatant == .FirstCombatant ? FirstCombatants[ActiveFirstCombatant] : SecondCombatants[ActiveSecondCombatant]
     }
     
-    func GetCombatant(CombatantToReturn: Int) -> Paragon {
-        return Combatants[CombatantToReturn]
+    func GetCombatant(IsFirstCombatant: Bool, CombatantToReturn: Int) -> Paragon {
+        return IsFirstCombatant ? FirstCombatants[CombatantToReturn] : SecondCombatants[CombatantToReturn]
     }
     
     func GetCombatantTarget() -> Paragon {
-        return Combatants[CombatantTarget[CurrentCombatant]]
+        return CurrentCombatant == .FirstCombatant ? SecondCombatants[ActiveSecondCombatant] : FirstCombatants[ActiveFirstCombatant]
     }
     
-    func GetDistanceBetweenCombatants(CombatantA: Int, CombatantB: Int) -> Double {
-        let xSquared: Double = pow((CombatantPositions[CombatantA][x] - CombatantPositions[CombatantB][x]), 2)
-        let ySquared: Double = pow((CombatantPositions[CombatantA][y] - CombatantPositions[CombatantB][y]), 2)
-        return (xSquared + ySquared).squareRoot()
-    }
-
-    func GetPrintableCombatDistanceBetweenCombatants(CombatantA: Int, CombatantB: Int) -> Double {
-        return Double(round((CombatDistances[CombatantA][CombatantB]) * 100) / 100)
+    func GetDistanceBetweenCombatants(CombatantA: Int, CombatantB: Int) -> Int {
+        return CombatDistance
     }
     
     //MARK: - Recovery Check Functions
     func CanPerformRecovery() -> Bool {
-        return !Combatants[CurrentCombatant].ParagonStatusManager.hasStatus(Status: .Winded)
+        return !ActiveCombatant.ParagonStatusManager.hasStatus(Status: .Winded)
     }
     
     
@@ -149,34 +112,34 @@ class CombatOverseer: CombatProtocol {
     
     //MARK: - Attack Check Functions
     func CanPerformAttack(AttackUsed: Int) -> Bool {
-        return CanPerformAttack(AttackingCombatant: CurrentCombatant, AttackUsed: AttackUsed)
+        return CanPerformAttack(AttackingCombatant: ActiveCombatant, AttackUsed: AttackUsed)
     }
     
-    func CanPerformAttack(AttackingCombatant: Int, AttackUsed: Int) -> Bool {
-        return CanPerformAttack(AttackingCombatant: AttackingCombatant, DefendingCombatant: CombatantTarget[AttackingCombatant], AttackUsed: AttackUsed)
+    func CanPerformAttack(AttackingCombatant: Paragon, AttackUsed: Int) -> Bool {
+        return CanPerformAttack(AttackingCombatant: AttackingCombatant, DefendingCombatant: GetCombatantTarget(), AttackUsed: AttackUsed)
     }
     
-    func CanPerformAttack(AttackingCombatant: Int, DefendingCombatant: Int, AttackUsed: Int) -> Bool {
-        let DistanceToTarget: Double = CombatDistances[AttackingCombatant][DefendingCombatant]
-        let AttackRangeMinimum: Double = Combatants[AttackingCombatant].ParagonAttackSet.Attacks[AttackUsed].AttackRangeMinumum
-        let AttackRangeMaximum: Double = Combatants[AttackingCombatant].ParagonAttackSet.Attacks[AttackUsed].AttackRangeMaximum
+    func CanPerformAttack(AttackingCombatant: Paragon, DefendingCombatant: Paragon, AttackUsed: Int) -> Bool {
+        let DistanceToTarget: Int = CombatDistance
+        let AttackRangeMinimum: Int = AttackingCombatant.ParagonAttackSet.Attacks[AttackUsed].AttackRangeMinumum
+        let AttackRangeMaximum: Int = AttackingCombatant.ParagonAttackSet.Attacks[AttackUsed].AttackRangeMaximum
         let WithinRange: Bool = AttackRangeMinimum <= DistanceToTarget && AttackRangeMaximum >= DistanceToTarget
-        let HasAttackPointsRemaining: Bool = Combatants[AttackingCombatant].ParagonAttackSet.Attacks[AttackUsed].hasAttackPointsRemaining()
-        let AttackEnergyCost: Int = Combatants[AttackingCombatant].ParagonAttackSet.Attacks[AttackUsed].AttackEnergyCost
-        let ParagonEnergy: Int = Combatants[AttackingCombatant].ParagonCombatAttributes.Energy
+        let HasAttackPointsRemaining: Bool = AttackingCombatant.ParagonAttackSet.Attacks[AttackUsed].hasAttackPointsRemaining()
+        let AttackEnergyCost: Int = AttackingCombatant.ParagonAttackSet.Attacks[AttackUsed].AttackEnergyCost
+        let ParagonEnergy: Int = AttackingCombatant.ParagonCombatAttributes.Energy
         let HasEnoughEnergy: Bool = ParagonEnergy >= AttackEnergyCost
         
         return WithinRange && HasAttackPointsRemaining && HasEnoughEnergy
     }
     
-    func WhyCannotPerformAttack(AttackingCombatant: Int, DefendingCombatant: Int, AttackUsed: Int) -> String {
-        let DistanceToTarget: Double = CombatDistances[AttackingCombatant][DefendingCombatant]
-        let AttackRangeMinimum: Double = Combatants[AttackingCombatant].ParagonAttackSet.Attacks[AttackUsed].AttackRangeMinumum
-        let AttackRangeMaximum: Double = Combatants[AttackingCombatant].ParagonAttackSet.Attacks[AttackUsed].AttackRangeMaximum
+    func WhyCannotPerformAttack(AttackingCombatant: Paragon, DefendingCombatant: Paragon, AttackUsed: Int) -> String {
+        let DistanceToTarget: Int = CombatDistance
+        let AttackRangeMinimum: Int = AttackingCombatant.ParagonAttackSet.Attacks[AttackUsed].AttackRangeMinumum
+        let AttackRangeMaximum: Int = AttackingCombatant.ParagonAttackSet.Attacks[AttackUsed].AttackRangeMaximum
         let WithinRange: Bool = AttackRangeMinimum <= DistanceToTarget && AttackRangeMaximum >= DistanceToTarget
-        let HasAttackPointsRemaining: Bool = Combatants[AttackingCombatant].ParagonAttackSet.Attacks[AttackUsed].hasAttackPointsRemaining()
-        let AttackEnergyCost: Int = Combatants[AttackingCombatant].ParagonAttackSet.Attacks[AttackUsed].AttackEnergyCost
-        let ParagonEnergy: Int = Combatants[AttackingCombatant].ParagonCombatAttributes.Energy
+        let HasAttackPointsRemaining: Bool = AttackingCombatant.ParagonAttackSet.Attacks[AttackUsed].hasAttackPointsRemaining()
+        let AttackEnergyCost: Int = AttackingCombatant.ParagonAttackSet.Attacks[AttackUsed].AttackEnergyCost
+        let ParagonEnergy: Int = AttackingCombatant.ParagonCombatAttributes.Energy
         let HasEnoughEnergy: Bool = ParagonEnergy >= AttackEnergyCost
         
         if !WithinRange {
@@ -193,39 +156,39 @@ class CombatOverseer: CombatProtocol {
     
     
     //MARK: - Perform Action Functions
-    func PerformMove(MoveDistance: Double) {
+    func PerformMove(MoveDistance: Int) {
         CombatantHasMoved = true
-        MoveCombatant(AttackingParagon: CurrentCombatant, DefendingParagon: CombatantTarget[CurrentCombatant], DistanceToMove: MoveDistance)
+        MoveCombatant(DistanceToMove: MoveDistance)
     }
     
-    func PerformOpponentMove(MoveDistance: Double) {
-        MoveCombatant(AttackingParagon: CombatantTarget[CurrentCombatant], DefendingParagon: CurrentCombatant, DistanceToMove: MoveDistance)
+    func PerformOpponentMove(MoveDistance: Int) {
+        MoveCombatant(DistanceToMove: MoveDistance)
     }
     
-    func PerformAttack(AttackingCombatant: Int, AttackUsed: Int) {
-        PerformAttack(AttackingCombatant: AttackingCombatant, DefendingCombatant: CombatantTarget[AttackingCombatant], AttackUsed: AttackUsed)
+    func PerformAttack(AttackingCombatant: Paragon, AttackUsed: Int) {
+        PerformAttack(AttackingCombatant: AttackingCombatant, DefendingCombatant: GetCombatantTarget(), AttackUsed: AttackUsed)
     }
     
-    func PerformAttack(AttackingCombatant: Int, DefendingCombatant: Int, AttackUsed: Int) {
+    func PerformAttack(AttackingCombatant: Paragon, DefendingCombatant: Paragon, AttackUsed: Int) {
         let DiceUtility = DiceUtility()
         
-        var AttackValue: Int = Combatants[AttackingCombatant].getAttackValueForAttack(AttackUsed: AttackUsed) + DiceUtility.Roll_D20()
+        var AttackValue: Int = AttackingCombatant.getAttackValueForAttack(AttackUsed: AttackUsed) + DiceUtility.Roll_D20()
         var DefenseValue: Int = 0
-        if !Combatants[DefendingCombatant].ParagonStatusManager.hasStatus(Status: .Defenseless){
-            if Combatants[AttackingCombatant].ParagonAttackSet.Attacks[AttackUsed].AttackDistance == .Melee {
-                if Combatants[DefendingCombatant].ParagonStatusManager.ImmuneToMeleeAttacks || Combatants[DefendingCombatant].ParagonStatusManager.ImmuneToMeleeAttacksTemporary {
+        if !DefendingCombatant.ParagonStatusManager.hasStatus(Status: .Defenseless){
+            if AttackingCombatant.ParagonAttackSet.Attacks[AttackUsed].AttackDistance == .Melee {
+                if DefendingCombatant.ParagonStatusManager.ImmuneToMeleeAttacks || DefendingCombatant.ParagonStatusManager.ImmuneToMeleeAttacksTemporary {
                     DefenseValue = AttackValue + 1
                 } else {
-                    DefenseValue = Combatants[DefendingCombatant].getMeleeDefense() + DiceUtility.Roll_D20()
+                    DefenseValue = DefendingCombatant.getMeleeDefense() + DiceUtility.Roll_D20()
                 }
-            } else if Combatants[AttackingCombatant].ParagonAttackSet.Attacks[AttackUsed].AttackDistance == .Range {
-                if Combatants[DefendingCombatant].ParagonStatusManager.ImmuneToRangedAttacks || Combatants[DefendingCombatant].ParagonStatusManager.ImmuneToRangedAttacksTemporary {
+            } else if AttackingCombatant.ParagonAttackSet.Attacks[AttackUsed].AttackDistance == .Range {
+                if DefendingCombatant.ParagonStatusManager.ImmuneToRangedAttacks || DefendingCombatant.ParagonStatusManager.ImmuneToRangedAttacksTemporary {
                     DefenseValue = AttackValue + 1
                 } else {
-                    DefenseValue = Combatants[DefendingCombatant].getRangeDefense() + DiceUtility.Roll_D20()
+                    DefenseValue = DefendingCombatant.getRangeDefense() + DiceUtility.Roll_D20()
                 }
             }
-            if Combatants[AttackingCombatant].ParagonAttackSet.Attacks[AttackUsed].AttackTypes.contains(.Mental) && Combatants[DefendingCombatant].ParagonStatusManager.ImmuneToMentalAttacks || Combatants[DefendingCombatant].ParagonStatusManager.ImmuneToMentalAttacksTemporary {
+            if AttackingCombatant.ParagonAttackSet.Attacks[AttackUsed].AttackTypes.contains(.Mental) && DefendingCombatant.ParagonStatusManager.ImmuneToMentalAttacks || DefendingCombatant.ParagonStatusManager.ImmuneToMentalAttacksTemporary {
                 DefenseValue = AttackValue + 1
             }
         } else {
@@ -235,43 +198,43 @@ class CombatOverseer: CombatProtocol {
         let AttackSuccess = AttackValue >= DefenseValue
         if AttackSuccess {
             CalculateAndInflictAttackDamage(AttackingCombatant: AttackingCombatant, DefendingCombatant: DefendingCombatant, AttackUsed: AttackUsed)
-        } else if Combatants[DefendingCombatant].ParagonStatusManager.hasStatus(Status: .Counterattacking) {
-            let CounterAttackDamage = GetLowestDamageValueForParagonCounterAttack(Paragon: Combatants[DefendingCombatant])
+        } else if DefendingCombatant.ParagonStatusManager.hasStatus(Status: .Counterattacking) {
+            let CounterAttackDamage = GetLowestDamageValueForParagonCounterAttack(Paragon: DefendingCombatant)
             InflictDamageFromCombatant(AttackingCombatant: DefendingCombatant, DefendingCombatant: AttackingCombatant, DamageToInflict: CounterAttackDamage)
         }
     }
     
-    func CalculateAndInflictAttackDamage(AttackingCombatant: Int, DefendingCombatant: Int, AttackUsed: Int) {
+    func CalculateAndInflictAttackDamage(AttackingCombatant: Paragon, DefendingCombatant: Paragon, AttackUsed: Int) {
         let DiceUtility = DiceUtility()
         
-        Combatants[DefendingCombatant].ParagonStatusManager.ReceivedDamageSinceLastTurn = true
-        let BaseDamage = Combatants[AttackingCombatant].getTotalBaseDamageForAttack(AttackUsed: AttackUsed)
-        let DamageRoll = DiceUtility.Roll_DNUM(DieToRoll: Combatants[AttackingCombatant].ParagonAttackSet.Attacks[AttackUsed].AttackDamageDie)
+        DefendingCombatant.ParagonStatusManager.ReceivedDamageSinceLastTurn = true
+        let BaseDamage = AttackingCombatant.getTotalBaseDamageForAttack(AttackUsed: AttackUsed)
+        let DamageRoll = DiceUtility.Roll_DNUM(DieToRoll: AttackingCombatant.ParagonAttackSet.Attacks[AttackUsed].AttackDamageDie)
         let TotalDamageRoll = BaseDamage + DamageRoll
-        let DefenderDamageResistance = Combatants[DefendingCombatant].getDamageResistance()
+        let DefenderDamageResistance = DefendingCombatant.getDamageResistance()
         let FinalDamage = TotalDamageRoll - DefenderDamageResistance
         
         InflictDamageFromCombatant(AttackingCombatant: AttackingCombatant, DefendingCombatant: DefendingCombatant, DamageToInflict: FinalDamage)
     }
     
-    func InflictDamageFromCombatant(AttackingCombatant: Int, DefendingCombatant: Int, DamageToInflict: Int) {
+    func InflictDamageFromCombatant(AttackingCombatant: Paragon, DefendingCombatant: Paragon, DamageToInflict: Int) {
         InflictDamage(DefendingCombatant: DefendingCombatant, DamageToInflict: DamageToInflict)
     }
     
-    func InflictDamage(DefendingCombatant: Int, DamageToInflict: Int) {
+    func InflictDamage(DefendingCombatant: Paragon, DamageToInflict: Int) {
         let DiceUtility = DiceUtility()
         
-        Combatants[DefendingCombatant].ParagonCombatAttributes.Health -= DamageToInflict
-        if Combatants[DefendingCombatant].ParagonCombatAttributes.Health <= 0 {
-            let OverDamage = 0 - Combatants[DefendingCombatant].ParagonCombatAttributes.Health
-            let WillpowerSaveValue = 10 + (2 * Combatants[DefendingCombatant].ParagonStatusManager.UnconsciousCounter) + OverDamage
-            let WillpowerSaveAttemptValue = Combatants[DefendingCombatant].ParagonCombatAttributes.Willpower + Combatants[DefendingCombatant].ParagonTemporaryAttributes.Willpower + DiceUtility.Roll_D20()
+        DefendingCombatant.ParagonCombatAttributes.Health -= DamageToInflict
+        if DefendingCombatant.ParagonCombatAttributes.Health <= 0 {
+            let OverDamage = 0 - DefendingCombatant.ParagonCombatAttributes.Health
+            let WillpowerSaveValue = 10 + (2 * DefendingCombatant.ParagonStatusManager.UnconsciousCounter) + OverDamage
+            let WillpowerSaveAttemptValue = DefendingCombatant.ParagonCombatAttributes.Willpower + DefendingCombatant.ParagonTemporaryAttributes.Willpower + DiceUtility.Roll_D20()
             if WillpowerSaveAttemptValue > WillpowerSaveValue {
-                Combatants[DefendingCombatant].ParagonCombatAttributes.Health = 1
-                Combatants[DefendingCombatant].ParagonStatusManager.UnconsciousCounter += 1
+                DefendingCombatant.ParagonCombatAttributes.Health = 1
+                DefendingCombatant.ParagonStatusManager.UnconsciousCounter += 1
             } else {
-                Combatants[DefendingCombatant].ParagonCombatAttributes.Health = 0
-                Combatants[DefendingCombatant].ParagonStatusManager.setStatus(Status: .Unconscious, NumberOfTurns: 0, SelfInflicted: false)
+                DefendingCombatant.ParagonCombatAttributes.Health = 0
+                DefendingCombatant.ParagonStatusManager.setStatus(Status: .Unconscious, NumberOfTurns: 0, SelfInflicted: false)
             }
         }
     }
@@ -281,57 +244,57 @@ class CombatOverseer: CombatProtocol {
     }
     
     func PerformExtendedRecovery() {
-        RestoreHealth(HealthToRestore: Combatants[CurrentCombatant].ParagonCombatAttributes.HealthRecovery)
-        RestoreEnergy(EnergyToRestore: Combatants[CurrentCombatant].ParagonCombatAttributes.EnergyRecovery)
+        RestoreHealth(CombatantToHeal: ActiveCombatant, HealthToRestore: ActiveCombatant.ParagonCombatAttributes.HealthRecovery)
+        RestoreEnergy(EnergyToRestore: ActiveCombatant.ParagonCombatAttributes.EnergyRecovery)
     }
     
-    func PerformExtendedRecovery(Combatant: Int) {
-        Combatants[Combatant].ParagonCombatAttributes.Health += Combatants[Combatant].ParagonCombatAttributes.HealthRecovery
-        if Combatants[Combatant].ParagonCombatAttributes.Health >= Combatants[Combatant].ParagonTotalAttributes.Health {
-            Combatants[Combatant].ParagonCombatAttributes.Health = Combatants[Combatant].ParagonTotalAttributes.Health
+    func PerformExtendedRecovery(Combatant: Paragon) {
+        Combatant.ParagonCombatAttributes.Health += Combatant.ParagonCombatAttributes.HealthRecovery
+        if Combatant.ParagonCombatAttributes.Health >= Combatant.ParagonTotalAttributes.Health {
+            Combatant.ParagonCombatAttributes.Health = Combatant.ParagonTotalAttributes.Health
         }
-        Combatants[Combatant].ParagonCombatAttributes.Energy += Combatants[Combatant].ParagonCombatAttributes.EnergyRecovery
-        if Combatants[Combatant].ParagonCombatAttributes.Energy >= Combatants[Combatant].ParagonTotalAttributes.Energy {
-            Combatants[Combatant].ParagonCombatAttributes.Energy = Combatants[Combatant].ParagonTotalAttributes.Energy
+        Combatant.ParagonCombatAttributes.Energy += Combatant.ParagonCombatAttributes.EnergyRecovery
+        if Combatant.ParagonCombatAttributes.Energy >= Combatant.ParagonTotalAttributes.Energy {
+            Combatant.ParagonCombatAttributes.Energy = Combatant.ParagonTotalAttributes.Energy
         }
     }
     
     
     //MARK: - Health and Energy Manipulation Functions
     func SpendEnergy(EnergyToSpend: Int) {
-        ModifyEnergy(Combatant: CurrentCombatant, Energy: (-1 * EnergyToSpend))
+        ModifyEnergy(CombatantToModify: ActiveCombatant, Energy: (-1 * EnergyToSpend))
     }
     
-    func SpendEnergyForCombatant(Combatant: Int, EnergyToSpend: Int) {
-        ModifyEnergy(Combatant: Combatant, Energy: (-1 * EnergyToSpend))
+    func SpendEnergyForCombatant(Combatant: Paragon, EnergyToSpend: Int) {
+        ModifyEnergy(CombatantToModify: Combatant, Energy: (-1 * EnergyToSpend))
     }
     
     func RestoreEnergy(EnergyToRestore: Int) {
-        ModifyEnergy(Combatant: CurrentCombatant, Energy: EnergyToRestore)
+        ModifyEnergy(CombatantToModify: ActiveCombatant, Energy: EnergyToRestore)
     }
     
-    func RestoreEnergyForCombatant(Combatant: Int, EnergyToRestore: Int) {
-        ModifyEnergy(Combatant: Combatant, Energy: EnergyToRestore)
+    func RestoreEnergyForCombatant(Combatant: Paragon, EnergyToRestore: Int) {
+        ModifyEnergy(CombatantToModify: Combatant, Energy: EnergyToRestore)
     }
     
-    func ModifyEnergy(Combatant: Int, Energy: Int) {
-        Combatants[Combatant].ParagonCombatAttributes.Energy += Energy
-        if Combatants[Combatant].ParagonCombatAttributes.Energy >= Combatants[Combatant].ParagonTotalAttributes.Energy {
-            Combatants[Combatant].ParagonCombatAttributes.Energy = Combatants[Combatant].ParagonTotalAttributes.Energy
+    func ModifyEnergy(CombatantToModify: Paragon, Energy: Int) {
+        CombatantToModify.ParagonCombatAttributes.Energy += Energy
+        if CombatantToModify.ParagonCombatAttributes.Energy >= CombatantToModify.ParagonTotalAttributes.Energy {
+            CombatantToModify.ParagonCombatAttributes.Energy = CombatantToModify.ParagonTotalAttributes.Energy
         }
-        if Combatants[Combatant].ParagonCombatAttributes.Energy < 0 {
-            Combatants[Combatant].ParagonCombatAttributes.Energy = 0
+        if CombatantToModify.ParagonCombatAttributes.Energy < 0 {
+            CombatantToModify.ParagonCombatAttributes.Energy = 0
         }
     }
     
-    func SetEnergy(Combatant: Int, EnergyValue: Int) {
-        Combatants[Combatant].ParagonCombatAttributes.Energy = EnergyValue
+    func SetEnergy(CombatantToSet: Paragon, EnergyValue: Int) {
+        CombatantToSet.ParagonCombatAttributes.Energy = EnergyValue
     }
     
-    func RestoreHealth(HealthToRestore: Int) {
-        Combatants[CurrentCombatant].ParagonCombatAttributes.Health += HealthToRestore
-        if Combatants[CurrentCombatant].ParagonCombatAttributes.Health >= Combatants[CurrentCombatant].ParagonTotalAttributes.Health {
-            Combatants[CurrentCombatant].ParagonCombatAttributes.Health = Combatants[CurrentCombatant].ParagonTotalAttributes.Health
+    func RestoreHealth(CombatantToHeal: Paragon, HealthToRestore: Int) {
+        CombatantToHeal.ParagonCombatAttributes.Health += HealthToRestore
+        if CombatantToHeal.ParagonCombatAttributes.Health >= CombatantToHeal.ParagonTotalAttributes.Health {
+            CombatantToHeal.ParagonCombatAttributes.Health = CombatantToHeal.ParagonTotalAttributes.Health
         }
     }
     
@@ -342,229 +305,50 @@ class CombatOverseer: CombatProtocol {
     }
     
     func SetAttackPointsForAttack(Attack: Int, Value: Int) {
-        Combatants[CurrentCombatant].ParagonAttackSet.Attacks[Attack].setAttackPoints(ToValue: Value)
+        ActiveCombatant.ParagonAttackSet.Attacks[Attack].setAttackPoints(ToValue: Value)
     }
     
     func ModifyAttackPointsForAttack(Attack: Int, Value: Int) {
-        Combatants[CurrentCombatant].ParagonAttackSet.Attacks[Attack].modifyAttackPoints(ByValue: Value)
+        ActiveCombatant.ParagonAttackSet.Attacks[Attack].modifyAttackPoints(ByValue: Value)
     }
     
     
     //MARK: - Start Turn Functions
     func BeginParagonTurn() {
-        Combatants[CurrentCombatant].functionsForStartOfTurn()
+        ActiveCombatant.functionsForStartOfTurn()
         CombatantHasMoved = false
     }
     
     
     //MARK: - End Turn Functions
     func CompleteParagonTurn() {
-        Combatants[CurrentCombatant].functionsForEndOfTurn()
-        PassTurnToNextCombatant()
+        ActiveCombatant.functionsForEndOfTurn()
     }
     
     func PassTurnToNextCombatant() {
-        CurrentCombatant += 1
-        if CurrentCombatant >= Combatants.count {
-            CurrentCombatant = 0
-        }
+        CurrentCombatant = CurrentCombatant == .FirstCombatant ? .SecondCombatant : .FirstCombatant
+        ActiveCombatant = CurrentCombatant == .FirstCombatant ? FirstCombatants[ActiveFirstCombatant] : SecondCombatants[ActiveSecondCombatant]
     }
     
     
     //MARK: - Utility Functions
-    func MoveCombatant(AttackingParagon: Int, DefendingParagon: Int, DistanceToMove: Double) {
-        if CombatDistances[AttackingParagon][DefendingParagon] <= DistanceToMove {
-            CombatantPositions[AttackingParagon][x] = CombatantPositions[DefendingParagon][x]
-            CombatantPositions[AttackingParagon][y] = CombatantPositions[DefendingParagon][y]
-        } else if CombatantPositions[AttackingParagon][x] == CombatantPositions[DefendingParagon][x] && CombatantPositions[AttackingParagon][y] == CombatantPositions[DefendingParagon][y] {
-            if CombatantPositions[AttackingParagon][x] < 0 {
-                CombatantPositions[AttackingParagon][x] += DistanceToMove
-            } else if CombatantPositions[AttackingParagon][y] < 0 {
-                CombatantPositions[AttackingParagon][y] += DistanceToMove
-            } else if CombatantPositions[AttackingParagon][x] > CombatantPositions[AttackingParagon][y] {
-                if CombatantPositions[AttackingParagon][x] > DistanceToMove {
-                    CombatantPositions[AttackingParagon][x] -= DistanceToMove
-                } else {
-                    CombatantPositions[AttackingParagon][x] += DistanceToMove
-                }
-            } else {
-                if CombatantPositions[AttackingParagon][y] > DistanceToMove {
-                    CombatantPositions[AttackingParagon][y] -= DistanceToMove
-                } else {
-                    CombatantPositions[AttackingParagon][y] += DistanceToMove
-                }
-            }
-        } else if CombatantPositions[AttackingParagon][x] == CombatantPositions[DefendingParagon][x] {
-            if CombatantPositions[AttackingParagon][y] > CombatantPositions[DefendingParagon][y] {
-                if DistanceToMove > (CombatantPositions[AttackingParagon][y] - CombatantPositions[DefendingParagon][y]) {
-                    CombatantPositions[AttackingParagon][y] = CombatantPositions[DefendingParagon][y]
-                } else {
-                    CombatantPositions[AttackingParagon][y] -= DistanceToMove
-                }
-            } else {
-                if DistanceToMove > (CombatantPositions[DefendingParagon][y] - CombatantPositions[AttackingParagon][y]) {
-                    CombatantPositions[AttackingParagon][y] = CombatantPositions[DefendingParagon][y]
-                } else {
-                    CombatantPositions[AttackingParagon][y] += DistanceToMove
-                }
-            }
-        } else if CombatantPositions[AttackingParagon][y] == CombatantPositions[DefendingParagon][y] {
-            if CombatantPositions[AttackingParagon][x] > CombatantPositions[DefendingParagon][x] {
-                if DistanceToMove > (CombatantPositions[AttackingParagon][x] - CombatantPositions[DefendingParagon][x]) {
-                    CombatantPositions[AttackingParagon][x] = CombatantPositions[DefendingParagon][x]
-                } else {
-                    CombatantPositions[AttackingParagon][x] -= DistanceToMove
-                }
-            } else {
-                if DistanceToMove > (CombatantPositions[DefendingParagon][x] - CombatantPositions[AttackingParagon][x]) {
-                    CombatantPositions[AttackingParagon][x] = CombatantPositions[DefendingParagon][x]
-                } else {
-                    CombatantPositions[AttackingParagon][x] += DistanceToMove
-                }
-            }
+    func MoveCombatant(DistanceToMove: Int) {
+        if DistanceToMove >= CombatDistance {
+            CombatDistance = 0
         } else {
-            let xDistance: Double = (CombatantPositions[DefendingParagon][x] - CombatantPositions[AttackingParagon][x]).magnitude
-            let yDistance: Double = (CombatantPositions[DefendingParagon][y] - CombatantPositions[AttackingParagon][y]).magnitude
-            let hypotDistance: Double = CombatDistances[AttackingParagon][DefendingParagon]
-            let newHypotDistance: Double = DistanceToMove
-            let xShift: Double = ((hypotDistance - newHypotDistance) * xDistance) / hypotDistance
-            let yShift: Double = ((hypotDistance - newHypotDistance) * yDistance) / hypotDistance
-            if CombatantPositions[AttackingParagon][x] < CombatantPositions[DefendingParagon][x] {
-                CombatantPositions[AttackingParagon][x] += xShift
+            if DistanceToMove < 0 {
+                CombatDistance = CombatDistance - DistanceToMove
             } else {
-                CombatantPositions[AttackingParagon][x] -= xShift
-            }
-            
-            if CombatantPositions[AttackingParagon][y] < CombatantPositions[DefendingParagon][y] {
-                CombatantPositions[AttackingParagon][y] += yShift
-            } else {
-                CombatantPositions[AttackingParagon][y] -= yShift
-            }
-        }
-        
-        for i in 0..<CombatantsCount {
-            if i == AttackingParagon {
-                CombatDistances[i][i] = 0
-            } else {
-                CombatDistances[AttackingParagon][i] = GetDistanceBetweenCombatants(CombatantA: AttackingParagon, CombatantB: i)
-                CombatDistances[i][AttackingParagon] = CombatDistances[AttackingParagon][i]
+                CombatDistance = CombatDistance + DistanceToMove
             }
         }
     }
     
-    func AddCombatant(ParagonToAdd: Paragon) {
-        Combatants.append(ParagonToAdd)
-        CombatantsCount += 1
-        let NewCombatant = (CombatantsCount - 1)
-        
-        let newPosition: [Double] = [Double.random(in: MINIMUM_STARTING_POSISITION...MAXIMUM_STARTING_POSISITION).rounded(.down), Double.random(in: MINIMUM_STARTING_POSISITION...MAXIMUM_STARTING_POSISITION).rounded(.down)]
-        CombatantPositions.append(newPosition)
-        
-        for i in 0..<CombatantsCount {
-            CombatDistances[i].append(GetDistanceBetweenCombatants(CombatantA: NewCombatant, CombatantB: i))
-        }
-        
-        let NewCombatDistances: [Double] = [Double](repeating: 0, count: CombatantsCount)
-        CombatDistances.append(NewCombatDistances)
-        for i in 0..<CombatantsCount {
-            if i == NewCombatant {
-                CombatDistances[i][i] = 0
-            } else {
-                CombatDistances[NewCombatant][i] = CombatDistances[i][NewCombatant]
-            }
-        }
-        
-        CombatantTarget.append(0)
-        AddCombatantToInitiativeOrder(ParagonToAdd: ParagonToAdd)
-    }
-    
-    func AddCombatantWithAlly(ParagonToAdd: Paragon, Ally: Int) {
-        Combatants.append(ParagonToAdd)
-        CombatantsCount += 1
-        let NewCombatant = (CombatantsCount - 1)
-        
-        CombatantPositions[NewCombatant][x] = CombatantPositions[Ally][x] + 1
-        CombatantPositions[NewCombatant][y] = CombatantPositions[Ally][y]
-        
-        for i in 0..<CombatantsCount {
-            if i != NewCombatant {
-                CombatDistances[i].append(GetDistanceBetweenCombatants(CombatantA: NewCombatant, CombatantB: i))
-            }
-            if i == Ally {
-                CombatantAllies[i].append(true)
-            } else {
-                CombatantAllies[i].append(CombatantAllies[Ally][i])
-            }
-        }
-        
-        let NewCombatDistances: [Double] = [Double](repeating: 0, count: CombatantsCount)
-        CombatDistances.append(NewCombatDistances)
-        for i in 0..<CombatantsCount {
-            if i == NewCombatant {
-                CombatDistances[i][i] = 0
-            } else {
-                CombatDistances[NewCombatant][i] = CombatDistances[i][NewCombatant]
-            }
-        }
-        
-        let NewCombatantAllies: [Bool] = CombatantAllies[Ally]
-        CombatantAllies.append(NewCombatantAllies)
-        
-        CombatantTarget.append(CombatantTarget[Ally])
-        AddCombatantToInitiativeOrder(ParagonToAdd: ParagonToAdd)
-    }
-    
-    func AddCombatantToInitiativeOrder(ParagonToAdd: Paragon) {
-        let dieUtility = DiceUtility()
-        let newCombatant = Combatants.count - 1
-        let InitiativeRoll = ParagonToAdd.ParagonCombatAttributes.Initiative + ParagonToAdd.ParagonTemporaryAttributes.Initiative + dieUtility.Roll_D20()
-        
-        var insertPosition = -1
-        for i in 0..<CombatantInitiativeOrder.count {
-            let nextRoll = CombatantInitiativeRolls[CombatantInitiativeOrder[i]]
-            if nextRoll < InitiativeRoll {
-                insertPosition = i
-            }
-        }
-        if insertPosition == -1 {
-            CombatantInitiativeOrder.append(newCombatant)
+    func AddCombatant(ParagonToAdd: Paragon, AddToFirstCombatants: Bool) {
+        if AddToFirstCombatants {
+            FirstCombatants.append(ParagonToAdd)
         } else {
-            CombatantInitiativeOrder.insert(newCombatant, at: insertPosition)
-        }
-        CombatantInitiativeRolls.append(InitiativeRoll)
-    }
-    
-    func IncrementCombatantTarget() {
-        let InitialTarget: Int = CombatantTarget[CurrentCombatant]
-        CombatantTarget[CurrentCombatant] += 1
-        if CombatantTarget[CurrentCombatant] >= CombatantsCount {
-            CombatantTarget[CurrentCombatant] = 0
-        }
-        while CombatantTarget[CurrentCombatant] == CurrentCombatant || CombatantAllies[CurrentCombatant][CombatantTarget[CurrentCombatant]] {
-            CombatantTarget[CurrentCombatant] += 1
-            if CombatantTarget[CurrentCombatant] >= CombatantsCount {
-                CombatantTarget[CurrentCombatant] = 0
-            }
-            if CombatantTarget[CurrentCombatant] == InitialTarget {
-                return
-            }
-        }
-    }
-    
-    func DecrementCombatantTarget() {
-        let InitialTarget: Int = CombatantTarget[CurrentCombatant]
-        CombatantTarget[CurrentCombatant] -= 1
-        if CombatantTarget[CurrentCombatant] < 0 {
-            CombatantTarget[CurrentCombatant] = CombatantsCount - 1
-        }
-        while CombatantTarget[CurrentCombatant] == CurrentCombatant || CombatantAllies[CurrentCombatant][CombatantTarget[CurrentCombatant]] {
-            CombatantTarget[CurrentCombatant] -= 1
-            if CombatantTarget[CurrentCombatant] < 0 {
-                CombatantTarget[CurrentCombatant] = CombatantsCount - 1
-            }
-            if CombatantTarget[CurrentCombatant] == InitialTarget {
-                return
-            }
+            SecondCombatants.append(ParagonToAdd)
         }
     }
     
@@ -580,36 +364,30 @@ class CombatOverseer: CombatProtocol {
         return LowestDamage
     }
     
-    func GetCombatantsInAoERange(Combatant: Int, Range: Double) -> [Int] {
-        var CombatantsInAOERange: [Int] = []
-        for i in 0..<CombatDistances[Combatant].count {
-            if Combatant != i && CombatDistances[Combatant][i] <= Range {
-                CombatantsInAOERange.append(i)
-            }
-        }
-        return CombatantsInAOERange
-    }
-    
     
     //MARK: - Buff Debuff Functions
     
     
     
     //MARK: - Protocol Functions
-    func drawCardsForParagon(Combatant: Int, NumberOfCards: Int) {
-        
-    }
-    
-    func moveParagonByProtocol(Combatant: Int, MoveDistance: Double) {
-        MoveCombatant(AttackingParagon: Combatant, DefendingParagon: CombatantTarget[Combatant], DistanceToMove: MoveDistance)
+    func moveParagonByProtocol(MoveDistance: Int) {
+        MoveCombatant(DistanceToMove: MoveDistance)
     }
     
     func restoreHealthToParagon(Combatant: Int, HealthAmount: Int) {
-        Combatants[Combatant].addHealth(Amount: HealthAmount)
+        if CurrentCombatant == .FirstCombatant {
+            FirstCombatants[Combatant].addHealth(Amount: HealthAmount)
+        } else {
+            SecondCombatants[Combatant].addHealth(Amount: HealthAmount)
+        }
     }
     
     func restoreEnergyToParagon(Combatant: Int, EnergyAmount: Int) {
-        Combatants[Combatant].addEnergy(Amount: EnergyAmount)
+        if CurrentCombatant == .FirstCombatant {
+            FirstCombatants[Combatant].addEnergy(Amount: EnergyAmount)
+        } else {
+            SecondCombatants[Combatant].addEnergy(Amount: EnergyAmount)
+        }
     }
     
     func restoreAttackPointsofAttacks(NumberOfAttacks: Int) {
@@ -617,6 +395,10 @@ class CombatOverseer: CombatProtocol {
     }
     
     func addBuffToCombatant(Combatant: Int, Buff: Buff) {
-        Combatants[Combatant].addBuffToBuffs(BuffToAdd: Buff)
+        if CurrentCombatant == .FirstCombatant {
+            FirstCombatants[Combatant].addBuffToBuffs(BuffToAdd: Buff)
+        } else {
+            SecondCombatants[Combatant].addBuffToBuffs(BuffToAdd: Buff)
+        }
     }
 }

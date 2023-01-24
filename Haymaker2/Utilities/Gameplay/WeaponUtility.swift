@@ -117,8 +117,18 @@ class WeaponSet {
             TotalWeaponAttributes.RangeDefense += nextWeapon.WeaponAttributes.RangeDefense
             TotalWeaponAttributes.Toughness += nextWeapon.WeaponAttributes.Toughness
             TotalWeaponAttributes.Willpower += nextWeapon.WeaponAttributes.Willpower
-            TotalWeaponAttributes.StrengthTypes.append(contentsOf: nextWeapon.WeaponAttributes.StrengthTypes)
-            TotalWeaponAttributes.WeaknessTypes.append(contentsOf: nextWeapon.WeaponAttributes.WeaknessTypes)
+            for i in 0..<TotalWeaponAttributes.ResistanceAndWeaknessTypes.count {
+                TotalWeaponAttributes.ResistanceAndWeaknessTypesTurns[i] += nextWeapon.WeaponAttributes.ResistanceAndWeaknessTypesTurns[i]
+                TotalWeaponAttributes.ImmuneTypesTurns[i] += nextWeapon.WeaponAttributes.ImmuneTypesTurns[i]
+            }
+            TotalWeaponAttributes.MeleeImmuneTurns += nextWeapon.WeaponAttributes.MeleeImmuneTurns
+            TotalWeaponAttributes.RangeImmuneTurns += nextWeapon.WeaponAttributes.RangeImmuneTurns
+        }
+        if TotalWeaponAttributes.MeleeImmuneTurns < 0 {
+            TotalWeaponAttributes.MeleeImmuneTurns = 0
+        }
+        if TotalWeaponAttributes.RangeImmuneTurns < 0 {
+            TotalWeaponAttributes.RangeImmuneTurns = 0
         }
         return TotalWeaponAttributes
     }

@@ -113,8 +113,8 @@ class AttackCollection {
         let CreatedAttackEnergyCost: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackEnergyCostPos])!
         let CreatedAttackPoints: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackPointsMAXPos])!
         let CreatedUnlimitedAttackPoints: Bool = Bool(AttackCollectionArray[AttackPosition][CSVPositions.AttackUnlimitedAttackPointsPos])!
-        let CreatedAttackRangeMinimum: Double = Double(AttackCollectionArray[AttackPosition][CSVPositions.AttackRangeMinimumPos])!
-        let CreatedAttackRangeMaximum: Double = Double(AttackCollectionArray[AttackPosition][CSVPositions.AttackRangeMaximumPos])!
+        let CreatedAttackRangeMinimum: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackRangeMinimumPos])!
+        let CreatedAttackRangeMaximum: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackRangeMaximumPos])!
         let CreatedNumberOfAttacks: Int = Int(AttackCollectionArray[AttackPosition][CSVPositions.AttackNumberOfAttacksPos])!
         let CreatedisAOE: Bool = Bool(AttackCollectionArray[AttackPosition][CSVPositions.AttackisAOEPos])!
         let CreatedisUltimate: Bool = Bool(AttackCollectionArray[AttackPosition][CSVPositions.AttackisUltimatePos])!

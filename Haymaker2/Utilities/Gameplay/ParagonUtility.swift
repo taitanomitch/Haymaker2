@@ -242,13 +242,13 @@ class Paragon: NSObject {
     }
     
     func DecrementTurnCounters() {
-        self.ParagonTemporaryAttributes.decrementStrengthWeaknessTurns()
+        self.ParagonTemporaryAttributes.decrementResistanceAndWeaknessTurns()
         for i in 0..<ParagonBuffs.count {
-            ParagonBuffs[i].BuffAttributes.decrementStrengthWeaknessTurns()
+            ParagonBuffs[i].BuffAttributes.decrementResistanceAndWeaknessTurns()
             ParagonBuffs[i].decrementBuffTurns()
         }
         for i in 0..<ParagonDebuffs.count {
-            ParagonDebuffs[i].BuffAttributes.decrementStrengthWeaknessTurns()
+            ParagonDebuffs[i].BuffAttributes.decrementResistanceAndWeaknessTurns()
             ParagonDebuffs[i].decrementBuffTurns()
         }
         clearOldBuffsDebuffs()
@@ -362,68 +362,16 @@ class Paragon: NSObject {
             newAttributeManager.Toughness += AttributeManagersArray[i].Toughness
             newAttributeManager.Willpower += AttributeManagersArray[i].Willpower
             
-            for i in 0..<AttributeManagersArray[i].ImmuneTypes.count {
-                if !newAttributeManager.ImmuneTypes.contains(AttributeManagersArray[i].ImmuneTypes[i]) {
-                    newAttributeManager.ImmuneTypes.append(AttributeManagersArray[i].ImmuneTypes[i])
-                    newAttributeManager.ImmuneTypesTurns.append(AttributeManagersArray[i].ImmuneTypesTurns[i])
-                } else {
-                    for j in 0..<newAttributeManager.ImmuneTypes.count {
-                        if newAttributeManager.ImmuneTypes[j] == AttributeManagersArray[i].ImmuneTypes[i] {
-                            newAttributeManager.ImmuneTypesTurns[j] = (AttributeManagersArray[i].ImmuneTypesTurns[i] > newAttributeManager.ImmuneTypesTurns[j]) ? AttributeManagersArray[i].ImmuneTypesTurns[i] : newAttributeManager.ImmuneTypesTurns[j]
-                        }
-                    }
-                }
+            for j in 0..<AttributeManagersArray[i].ResistanceAndWeaknessTypes.count {
+                newAttributeManager.ResistanceAndWeaknessTypesTurns[j] = newAttributeManager.ResistanceAndWeaknessTypesTurns[j] + AttributeManagersArray[i].ResistanceAndWeaknessTypesTurns[j]
+                
+                newAttributeManager.ImmuneTypesTurns[j] = newAttributeManager.ImmuneTypesTurns[j] + AttributeManagersArray[i].ImmuneTypesTurns[j]
             }
             
-            for i in (newAttributeManager.ImmuneTypes.count-1)...0 {
-                if newAttributeManager.ImmuneTypesTurns[i] <= 0 {
-                    newAttributeManager.ImmuneTypes.remove(at: i)
-                    newAttributeManager.ImmuneTypesTurns.remove(at: i)
-                }
-            }
-            
-            for i in 0..<AttributeManagersArray[i].StrengthTypes.count {
-                if !newAttributeManager.StrengthTypes.contains(AttributeManagersArray[i].StrengthTypes[i]) {
-                    newAttributeManager.StrengthTypes.append(AttributeManagersArray[i].StrengthTypes[i])
-                    newAttributeManager.StrengthTypesTurns.append(AttributeManagersArray[i].StrengthTypesTurns[i])
-                } else {
-                    for j in 0..<newAttributeManager.StrengthTypes.count {
-                        if newAttributeManager.StrengthTypes[j] == AttributeManagersArray[i].StrengthTypes[i] {
-                            newAttributeManager.StrengthTypesTurns[j] = (AttributeManagersArray[i].StrengthTypesTurns[i] > newAttributeManager.StrengthTypesTurns[j]) ? AttributeManagersArray[i].StrengthTypesTurns[i] : newAttributeManager.StrengthTypesTurns[j]
-                        }
-                    }
-                }
-            }
-            
-            for i in (newAttributeManager.StrengthTypes.count-1)...0 {
-                if newAttributeManager.StrengthTypesTurns[i] <= 0 {
-                    newAttributeManager.StrengthTypes.remove(at: i)
-                    newAttributeManager.StrengthTypesTurns.remove(at: i)
-                }
-            }
-
-            for i in 0..<AttributeManagersArray[i].WeaknessTypes.count {
-                if !newAttributeManager.WeaknessTypes.contains(AttributeManagersArray[i].WeaknessTypes[i]) {
-                    newAttributeManager.WeaknessTypes.append(AttributeManagersArray[i].WeaknessTypes[i])
-                    newAttributeManager.WeaknessTypesTurns.append(AttributeManagersArray[i].WeaknessTypesTurns[i])
-                } else {
-                    for j in 0..<newAttributeManager.WeaknessTypes.count {
-                        if newAttributeManager.WeaknessTypes[j] == AttributeManagersArray[i].WeaknessTypes[i] {
-                            newAttributeManager.WeaknessTypesTurns[j] = AttributeManagersArray[i].WeaknessTypesTurns[i] > newAttributeManager.WeaknessTypesTurns[j] ? AttributeManagersArray[i].WeaknessTypesTurns[i] : newAttributeManager.WeaknessTypesTurns[j]
-                        }
-                    }
-                }
-            }
-            
-            for i in (newAttributeManager.WeaknessTypes.count-1)...0 {
-                if newAttributeManager.WeaknessTypesTurns[i] <= 0 {
-                    newAttributeManager.WeaknessTypes.remove(at: i)
-                    newAttributeManager.WeaknessTypesTurns.remove(at: i)
-                }
-            }
-            
-            newAttributeManager.MeleeImmune = newAttributeManager.MeleeImmune || AttributeManagersArray[i].MeleeImmune
-            newAttributeManager.RangeImmune = newAttributeManager.RangeImmune || AttributeManagersArray[i].RangeImmune
+            newAttributeManager.MeleeImmuneTurns = newAttributeManager.MeleeImmuneTurns + AttributeManagersArray[i].MeleeImmuneTurns
+            newAttributeManager.RangeImmuneTurns = newAttributeManager.RangeImmuneTurns + AttributeManagersArray[i].RangeImmuneTurns
+            newAttributeManager.MeleeImmune = newAttributeManager.MeleeImmuneTurns > 0
+            newAttributeManager.RangeImmune = newAttributeManager.RangeImmuneTurns > 0
         }
         return newAttributeManager
     }
@@ -447,10 +395,8 @@ class Paragon: NSObject {
         newAttributeManager.Willpower = Attributes.Willpower
         newAttributeManager.ImmuneTypes = Attributes.ImmuneTypes
         newAttributeManager.ImmuneTypesTurns = Attributes.ImmuneTypesTurns
-        newAttributeManager.StrengthTypes = Attributes.StrengthTypes
-        newAttributeManager.StrengthTypesTurns = Attributes.StrengthTypesTurns
-        newAttributeManager.WeaknessTypes = Attributes.WeaknessTypes
-        newAttributeManager.WeaknessTypesTurns = Attributes.WeaknessTypesTurns
+        newAttributeManager.ResistanceAndWeaknessTypes = Attributes.ResistanceAndWeaknessTypes
+        newAttributeManager.ResistanceAndWeaknessTypesTurns = Attributes.ResistanceAndWeaknessTypesTurns
         newAttributeManager.MeleeImmune = Attributes.MeleeImmune
         newAttributeManager.MeleeImmuneTurns = Attributes.MeleeImmuneTurns
         newAttributeManager.RangeImmune = Attributes.RangeImmune
@@ -472,82 +418,10 @@ class Paragon: NSObject {
         newAttributeManager.Toughness -= DebuffAttributes.Toughness
         newAttributeManager.Willpower -= DebuffAttributes.Willpower
         
-        for i in 0..<DebuffAttributes.ImmuneTypes.count {
-            if newAttributeManager.ImmuneTypes.contains(DebuffAttributes.ImmuneTypes[i]) {
-                for j in 0..<newAttributeManager.ImmuneTypes.count {
-                    if newAttributeManager.ImmuneTypes[j] == DebuffAttributes.ImmuneTypes[i] {
-                        newAttributeManager.ImmuneTypesTurns[j] -= DebuffAttributes.ImmuneTypesTurns[i]
-                    }
-                }
-            }
-        }
-        
-        for i in (newAttributeManager.ImmuneTypes.count-1)...0 {
-            if newAttributeManager.ImmuneTypesTurns[i] <= 0 {
-                newAttributeManager.ImmuneTypes.remove(at: i)
-                newAttributeManager.ImmuneTypesTurns.remove(at: i)
-            }
-        }
-        
-        for i in 0..<DebuffAttributes.StrengthTypes.count {
-            if !newAttributeManager.StrengthTypes.contains(DebuffAttributes.StrengthTypes[i]) {
-                if DebuffAttributes.WeaknessTypes.contains(DebuffAttributes.StrengthTypes[i]) {
-                    for j in 0..<DebuffAttributes.WeaknessTypes.count {
-                        if DebuffAttributes.WeaknessTypes[j] == DebuffAttributes.StrengthTypes[i] {
-                            DebuffAttributes.WeaknessTypesTurns[j] += DebuffAttributes.StrengthTypesTurns[i]
-                        }
-                    }
-                } else {
-                    DebuffAttributes.WeaknessTypes.append(DebuffAttributes.StrengthTypes[i])
-                    DebuffAttributes.WeaknessTypesTurns.append(DebuffAttributes.StrengthTypesTurns[i])
-                }
-            } else {
-                for j in 0..<newAttributeManager.StrengthTypes.count {
-                    if newAttributeManager.StrengthTypes[j] == DebuffAttributes.StrengthTypes[i] {
-                        newAttributeManager.StrengthTypesTurns[j] -= DebuffAttributes.StrengthTypesTurns[i]
-                        if newAttributeManager.StrengthTypesTurns[j] < 0 {
-                            let WeaknessTurnsToAdd = newAttributeManager.StrengthTypesTurns[j]
-                            if DebuffAttributes.WeaknessTypes.contains(DebuffAttributes.StrengthTypes[i]) {
-                                for j in 0..<DebuffAttributes.WeaknessTypes.count {
-                                    if DebuffAttributes.WeaknessTypes[j] == DebuffAttributes.StrengthTypes[i] {
-                                        DebuffAttributes.WeaknessTypesTurns[j] += WeaknessTurnsToAdd
-                                    }
-                                }
-                            } else {
-                                DebuffAttributes.WeaknessTypes.append(DebuffAttributes.StrengthTypes[i])
-                                DebuffAttributes.WeaknessTypesTurns.append(WeaknessTurnsToAdd)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        
-        for i in (newAttributeManager.StrengthTypes.count-1)...0 {
-            if newAttributeManager.StrengthTypesTurns[i] <= 0 {
-                newAttributeManager.StrengthTypes.remove(at: i)
-                newAttributeManager.StrengthTypesTurns.remove(at: i)
-            }
-        }
-
-        for i in 0..<DebuffAttributes.WeaknessTypes.count {
-            if !newAttributeManager.WeaknessTypes.contains(DebuffAttributes.WeaknessTypes[i]) {
-                newAttributeManager.WeaknessTypes.append(DebuffAttributes.WeaknessTypes[i])
-                newAttributeManager.WeaknessTypesTurns.append(DebuffAttributes.WeaknessTypesTurns[i])
-            } else {
-                for j in 0..<newAttributeManager.WeaknessTypes.count {
-                    if newAttributeManager.WeaknessTypes[j] == DebuffAttributes.StrengthTypes[i] {
-                        newAttributeManager.WeaknessTypesTurns[j] = DebuffAttributes.WeaknessTypesTurns[i] > newAttributeManager.WeaknessTypesTurns[j] ? DebuffAttributes.WeaknessTypesTurns[i] : newAttributeManager.WeaknessTypesTurns[j]
-                    }
-                }
-            }
-        }
-        
-        for i in (newAttributeManager.WeaknessTypes.count-1)...0 {
-            if newAttributeManager.WeaknessTypesTurns[i] <= 0 {
-                newAttributeManager.WeaknessTypes.remove(at: i)
-                newAttributeManager.WeaknessTypesTurns.remove(at: i)
-            }
+        for j in 0..<newAttributeManager.ResistanceAndWeaknessTypes.count {
+            newAttributeManager.ResistanceAndWeaknessTypesTurns[j] = newAttributeManager.ResistanceAndWeaknessTypesTurns[j] - DebuffAttributes.ResistanceAndWeaknessTypesTurns[j]
+            
+            newAttributeManager.ImmuneTypesTurns[j] = newAttributeManager.ImmuneTypesTurns[j] - DebuffAttributes.ImmuneTypesTurns[j]
         }
         
         newAttributeManager.MeleeImmuneTurns -= DebuffAttributes.MeleeImmuneTurns

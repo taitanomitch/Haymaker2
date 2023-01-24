@@ -122,7 +122,7 @@ class ParagonCard {
         for i in 0..<CardEffect.count {
             switch  CardEffect[i] {
             case .CardDraw:
-                CardCombatProtocol?.drawCardsForParagon(Combatant: AttackingCombatant, NumberOfCards: CardValue)
+                return
             case .RestoreEnergy:
                 var CombatantToRestoreEnergy: Int = -1
                 var CombatantMaxEnergy: Int = -1
@@ -160,13 +160,13 @@ class ParagonCard {
             case .RestoreAttackPoints:
                 CardCombatProtocol?.restoreAttackPointsofAttacks(NumberOfAttacks: CardValue)
             case .Move:
-                var DistanceToMove: Double = 0
+                var DistanceToMove: Int = 0
                 if CardValueType == .Number {
-                    DistanceToMove = Double(CardValue)
+                    DistanceToMove = CardValue
                 } else if CardValueType == .Speed {
-                    DistanceToMove = Double(AttackingParagon.getSpeed())
+                    DistanceToMove = AttackingParagon.getSpeed()
                 }
-                CardCombatProtocol?.moveParagonByProtocol(Combatant: AttackingCombatant, MoveDistance: DistanceToMove)
+                CardCombatProtocol?.moveParagonByProtocol(MoveDistance: DistanceToMove)
             case .Buff:
                 let BuffAttributes: AttributesManager = AttributesManager()
                 for i in 0..<CardBuffType.count {
